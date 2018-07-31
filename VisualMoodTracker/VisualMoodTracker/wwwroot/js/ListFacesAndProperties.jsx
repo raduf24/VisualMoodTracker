@@ -1364,7 +1364,7 @@ const Card = (props) => {
         <div style={{ margin: '1em' }}>
             <div style={{ display: 'inline-flex' }}>
                 <div style={{ overflow: 'hidden', position: 'relative', width: '180px', height: '180px', float: 'right', marginLeft: '2em' }} >
-                    <img src="./images/test.jpg" style={{ objectFit:'cover', backgroundRepeat: 'no-repeat', position: 'absolute', left: props.faceRectangle.left * -1 + props.faceRectangle.height / 4, top: props.faceRectangle.top * -1 + props.faceRectangle.width / 4 }} />
+                    <img src="./images/test.jpg" style={{ position: 'absolute', left: props.faceRectangle.left * -1, top: props.faceRectangle.top * -1}} />
                 </div>
                 <div style={{ display: 'inline-block', marginLeft: '1em' }}>
                     <div>ID:{props.faceId}</div>
@@ -1376,7 +1376,6 @@ const Card = (props) => {
                     <div>Neutral: {props.faceAttributes.emotion.neutral}</div>
                     <div>Sadness: {props.faceAttributes.emotion.sadness}</div>
                     <div>Surprise: {props.faceAttributes.emotion.surprise}</div>
-                    <div>Value: {props.faceRectangle.top}</div>
                 </div>
             </div>
 
