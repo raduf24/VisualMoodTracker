@@ -1360,11 +1360,30 @@ class Form extends React.Component {
 }
 
 const Card = (props) => {
+    const widthDiv = 180;
     return (
         <div style={{ margin: '1em' }}>
             <div style={{ display: 'inline-flex' }}>
-                <div style={{ overflow: 'hidden', position: 'relative', width: '180px', height: '180px', float: 'right', marginLeft: '2em' }} >
-                    <img src="./images/test.jpg" style={{ position: 'absolute', left: props.faceRectangle.left * -1, top: props.faceRectangle.top * -1}} />
+                <div style={{ overflow: 'hidden', position: 'relative', width: widthDiv, height: widthDiv, float: 'right', marginLeft: '2em' }} >
+                    {(() => {
+                        if (props.faceRectangle.width > widthDiv || props.faceRectangle.height > widthDiv) {
+                            return <img src="./images/test.jpg" style={{ zoom: '50%', position: 'absolute', left: props.faceRectangle.left * -1 + props.faceRectangle.width / 3, top: props.faceRectangle.top * -1 + props.faceRectangle.height / 3 }} />;
+                        }
+                        if (props.faceRectangle.width == widthDiv || props.faceRectangle.height == widthDiv) {
+                            return <img src="./images/test.jpg" style={{ zoom: '60%', position: 'absolute', left: props.faceRectangle.left * -1 + props.faceRectangle.width / 3, top: props.faceRectangle.top * -1 + props.faceRectangle.height / 3 }} />;
+                        }
+                        if (widthDiv - props.faceRectangle.width <= 20 || widthDiv - props.faceRectangle.height <= 20) {
+                            return <img src="./images/test.jpg" style={{ zoom: '70%', position: 'absolute', left: props.faceRectangle.left * -1 + props.faceRectangle.width / 3, top: props.faceRectangle.top * -1 + props.faceRectangle.height / 3 }} />;
+                        }
+                        if (widthDiv - props.faceRectangle.width >= 50 || widthDiv - props.faceRectangle.height >= 50)
+                        {
+                            return <img src="./images/test.jpg" style={{ zoom: '110%', position: 'absolute', left: props.faceRectangle.left * -1 + props.faceRectangle.width / 3, top: props.faceRectangle.top * -1 + props.faceRectangle.height / 3 }} />;
+                        }
+                        else {
+                            return <img src="./images/test.jpg" style={{ position: 'absolute', left: props.faceRectangle.left * -1 + props.faceRectangle.width / 4, top: props.faceRectangle.top * -1 + props.faceRectangle.height / 4 }} />;
+                        }
+                    })()}
+                    <h1> {HTMLDivElement.width} </h1>
                 </div>
                 <div style={{ display: 'inline-block', marginLeft: '1em' }}>
                     <div>ID:{props.faceId}</div>
