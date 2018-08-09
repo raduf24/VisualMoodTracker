@@ -2,12 +2,13 @@
 class UploadImage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {};  
     }
 
     state = {
         selectedFile: null,
         formIsValid: false,
+        sessionId: null,
     }
 
 
@@ -16,9 +17,6 @@ class UploadImage extends React.Component {
             if (this.state.selectedFile != null) {
                 this.setState({ formIsValid: true });
             } });
-
-        
-
     }
 
     uploadHandler = () => {
@@ -36,25 +34,47 @@ class UploadImage extends React.Component {
         }
     }
 
-
-
     fileUpload = () => {
-        if (this.state.formIsValid) {
-            const url = "/api/sessions";
-            const formData = new FormData();
-            formData.append('fileUpload', this.state.selectedFile);
-            const config = {
-                headers: {
-                    'content-type': 'multipart/form-data'
+        const url = "/api/sessions";
+        if (this.state.sessionId != null) {
+            if (this.state.formIsValid) {
+                const formData = new FormData();
+                formData.append('fileUpload', this.state.selectedFile);
+                formData.append('sessionId', this.state.sessionId);
+                const config = {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
                 }
+                axios.post(url, formData, config).then(response => {
+                    this.props.updateState(response.data);
+                    this.setState({ sessionId: response.data.sessionId, selectedFile: null });
+                });
             }
-            axios.post(url, formData, config).then(response => {
-                this.props.updateState(response.data);                
-            });
+            else {
+                alert("You have to select an image first!");
+            }
+            document.getElementById('inputReset').value = '';
         }
         else {
-            alert("You have to select an image first!");          
-        }
+            if (this.state.formIsValid) {
+                const formData = new FormData();
+                formData.append('fileUpload', this.state.selectedFile);
+                const config = {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
+                }
+                axios.post(url, formData, config).then(response => {
+                    this.props.updateState(response.data);
+                    this.setState({ sessionId: response.data.sessionId, selectedFile: null });
+                });
+            }
+            else {
+                alert("You have to select an image first!");
+            }
+            document.getElementById('inputReset').value = '';
+        } 
     }
 
     render() {
@@ -62,7 +82,7 @@ class UploadImage extends React.Component {
         return (
             <div>
                 <br />
-                <input type="file" accept="image/*" className="btn btn-lg" onChange={this.fileChangedHandler} />
+                <input id="inputReset" type="file" accept="image/*" className="btn btn-lg" onChange={this.fileChangedHandler} />
                 <br />
                 &emsp;
                 <button className="btn btn-lg black-background white"
@@ -88,7 +108,7 @@ class Form extends React.Component {
 const Card = (props) => {
     const thumbnailWidth = 180;
     const thumbnailHeight = 180;
-    const imageName = "./sessions/" + props.sessionId + "/1.jpg";
+    const imageName = "./sessions/" + props.sessionId + "/" + props.lastImage;
 
     return (
         <div style={{ margin: '1em' }}>
@@ -125,7 +145,7 @@ const Card = (props) => {
 const CardList = (props) => {
     return (
         <div style={{ display: 'inline-block', overflowY: 'scroll', height: '40em' }}>
-            {props.cards.faces.map(card => <Card key={card.faceId} sessionId={props.cards.sessionId} {...card} />)}
+            {props.cards.faces.map(card => <Card key={card.faceId} sessionId={props.cards.sessionId} lastImage={props.cards.lastImageId + props.cards.imageExtension} {...card} />)}
         </div>
     );
 };
@@ -134,6 +154,8 @@ class FacesList extends React.Component {
     state = {
         data: [],
         sessionNumber: null,
+        lastImageId: null,
+        lastImageExtension: null,
     }
 
     componentDidMount() {
@@ -149,7 +171,9 @@ class FacesList extends React.Component {
 
     updateState = (value) => {
         this.setState({ data: value });
-        this.setState({ sessionNumber: this.state.data.sessionId });
+        this.setState({ sessionNumber: value.sessionId });
+        this.setState({ lastImageId: value.lastImageId });
+        this.setState({ lastImageExtension: value.imageExtension });
     };
 
     render() {
@@ -164,7 +188,7 @@ class FacesList extends React.Component {
                     <div style={{ float: 'left' }}>
                         <h2> Session {this.state.sessionNumber}: </h2>
 
-                        <img src={".\\sessions\\" + this.state.sessionNumber + "\\1.jpg"} style={{ width: '40em', height: '25em' }} />
+                        <img src={".\\sessions\\" + this.state.sessionNumber + "\\" + this.state.lastImageId + this.state.lastImageExtension} style={{ width: '40em', height: '25em' }} />
                     </div>
                     <Form />
                     <CardList cards={this.state.data} />

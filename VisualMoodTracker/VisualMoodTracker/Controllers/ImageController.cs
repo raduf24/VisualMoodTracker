@@ -34,16 +34,20 @@ namespace VisualMoodTracker.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile fileUpload, string sessionId)
         {
+
             if (fileUpload == null || fileUpload.Length == 0)
                 return Content("file not selected");
 
-            sessionId = DateTime.Now.ToString("yyyyMMddHHmmss");
+            if (sessionId == null)
+            {
+                sessionId = DateTime.Now.ToString("yyyyMMddHHmmss");
 
-            bool exists = System.IO.Directory.Exists("wwwroot\\sessions\\" + sessionId);
-            if (!exists)
-            { System.IO.Directory.CreateDirectory("wwwroot\\sessions\\" + sessionId); }
+                bool exists = System.IO.Directory.Exists("wwwroot\\sessions\\" + sessionId);
+                if (!exists)
+                { System.IO.Directory.CreateDirectory("wwwroot\\sessions\\" + sessionId); }
+            }
 
-            int fileId = Directory.GetFiles("wwwroot\\sessions\\" + sessionId, ".json", SearchOption.AllDirectories).Length + 1;
+            int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length/2) + 1;
 
             string fileName = fileId + fileUpload.GetFileExtension();
 
@@ -56,20 +60,18 @@ namespace VisualMoodTracker.Controllers
                 await fileUpload.CopyToAsync(stream);
             }
 
-
             //return ID of image format from dateTime
-            List<FaceResult> facesList = getResultFromImageAnalysis(Directory.GetCurrentDirectory()+"\\wwwroot\\sessions\\" + sessionId + "\\" + fileName);
+            List<FaceResult> facesList = GetResultFromImageAnalysis(Directory.GetCurrentDirectory() + "\\wwwroot\\sessions\\" + sessionId + "\\" + fileName);
 
             string json = JsonConvert.SerializeObject(facesList.ToArray());
 
-            string json1 = "{" + "\"" + "sessionId" + "\"" + ":" + "\"" + sessionId + "\"" + "," + "\"" + "faces" + "\"" + ":" + json + "}";
+            json = AddTooJson(json, sessionId, fileId, fileUpload.GetFileExtension());
             System.IO.File.WriteAllText("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json", json);
 
-
-            return Ok(json1);
+            return Ok(json);
         }
 
-        public List<FaceResult> getResultFromImageAnalysis(string fileLocation)
+        public List<FaceResult> GetResultFromImageAnalysis(string fileLocation)
         {           
             ImageAnalyze analyzer = new ImageAnalyze();
             List<FaceResult> lst = analyzer.GetResult(fileLocation);
@@ -93,10 +95,20 @@ namespace VisualMoodTracker.Controllers
             }
         }
 
+        //TASK NR 5
         [HttpGet("{sessionId}")]
         public IActionResult GetImageFromSession(string sessionId)
         {
             return Ok(sessionId);
+        }
+
+        private string AddTooJson(string json, string sessionId, int fileId, string extension)
+        {
+            json = "{" + "\"" + "sessionId" + "\"" + ":" + "\"" + sessionId + "\"" + ","
+                + "\"" + "lastImageId" + "\"" + ":" + "\"" + fileId + "\"" + ","
+                + "\"" + "imageExtension" + "\"" + ":" + "\"" + extension + "\"" + ","
+                + "\"" + "faces" + "\"" + ":" + json + "}";
+            return json;
         }
 
     }
