@@ -65,8 +65,8 @@ class UploadImage extends React.Component {
                 <input type="file" accept="image/*" className="btn btn-lg" onChange={this.fileChangedHandler} />
                 <br />
                 &emsp;
-                <button ref="upload" className="btn btn-lg black-background white"
-                    onClick={this.fileUpload.bind(this, "upload")} disabled={!this.state.selectedFile} > Upload </button>
+                <button className="btn btn-lg black-background white"
+                    onClick={this.fileUpload.bind(this)} disabled={!this.state.selectedFile} > Upload </button>
                 &emsp; &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.downloadHandler} disabled > Download </button>
             </div>
