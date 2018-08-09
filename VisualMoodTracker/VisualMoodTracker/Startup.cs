@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using React.AspNet;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace WebApplicationNETCore
 {
@@ -27,6 +29,15 @@ namespace WebApplicationNETCore
             services.AddMvc();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddReact();
+            
+            services.AddSingleton<IFileProvider>(
+                new PhysicalFileProvider(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot")));
+            services.Configure<FormOptions>(x =>
+            {
+                x.ValueLengthLimit = int.MaxValue;
+                x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
+                x.KeyLengthLimit = int.MaxValue;
+            });
             return services.BuildServiceProvider();
         }
 
@@ -61,12 +72,16 @@ namespace WebApplicationNETCore
                 //config
                 //  .SetLoadBabel(false)
                 //  .AddScriptWithoutTransform("~/Scripts/bundle.server.js");
-                //config.AddScript("~/js/test.jsx");
-                //config.SetLoadBabel(true).AddScript("~/js/test.jsx");
-                config.SetLoadBabel(true).AddScript("~/js/ListFacesAndProperties.jsx");
+
+                config.SetLoadBabel(true).AddScript("~/js/App.jsx");
             });
             app.UseStaticFiles();
 
+            AutoMapper.Mapper.Initialize(cfg =>
+            {
+                cfg.CreateMap<VisualMoodTracker.Models.FileUploadViewModel, VisualMoodTracker.Entities.Image>();
+                
+            });
 
             app.UseMvc(routes =>
             {
