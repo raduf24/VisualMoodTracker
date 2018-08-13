@@ -3,6 +3,7 @@ class UploadImage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};  
+        this.fileUpload = this.fileUpload.bind(this);
     }
 
     state = {
@@ -11,26 +12,22 @@ class UploadImage extends React.Component {
         sessionId: null,
     }
 
-
     fileChangedHandler = (event) => {
         this.setState({ selectedFile: event.target.files[0] }, () => {
             if (this.state.selectedFile != null) {
                 this.setState({ formIsValid: true });
-            } });
-    }
-
-    uploadHandler = () => {
-        console.log(this.state.selectedFile)
+            }
+        });
     }
 
     downloadHandler = () => {
         try {
-            return axios.get("http://localhost:55847/api/sessions")
+            return axios.get("http://localhost:55847/api/sessions" + this.state.sessionId)
                 .then(function (response) {
                     console.log(response.data)
                 });
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
     }
 
@@ -78,7 +75,6 @@ class UploadImage extends React.Component {
     }
 
     render() {
-
         return (
             <div>
                 <br />
@@ -86,8 +82,8 @@ class UploadImage extends React.Component {
                 <br />
                 &emsp;
                 <button className="btn btn-lg black-background white"
-                    onClick={this.fileUpload.bind(this)} disabled={!this.state.selectedFile} > Upload </button>
-                &emsp; &emsp;
+                    onClick={this.fileUpload} disabled={!this.state.selectedFile} > Upload </button>
+                    &emsp; &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.downloadHandler} disabled > Download </button>
             </div>
         );
@@ -115,16 +111,16 @@ const Card = (props) => {
             <div style={{ display: 'inline-flex' }}>
                 <div style={{
                     overflow: 'hidden', position: 'relative', width: thumbnailWidth, height: thumbnailHeight,
-                    float: 'right', marginLeft: '2em'
-                }} >
-
-                    <img src={imageName} style={{
-                        position: 'absolute',
-                        left: -((props.faceRectangle.left + props.faceRectangle.width / 2)) + (thumbnailWidth / 2),
-                        top: -(props.faceRectangle.top + props.faceRectangle.height / 2) + (thumbnailHeight / 2)
-                    }} />
+                    float: 'right', marginLeft: '2em' }} >
+                
+                    <img src={imageName} 
+                        style={{
+                            position: 'absolute',
+                            left: -((props.faceRectangle.left + props.faceRectangle.width / 2)) + (thumbnailWidth / 2),
+                            top: -(props.faceRectangle.top + props.faceRectangle.height / 2) + (thumbnailHeight / 2) }} />                    
 
                 </div>
+
                 <div style={{ display: 'inline-block', marginLeft: '1em' }}>
                     <div>ID: {props.faceId}</div>
                     <div>Anger: {(props.faceEmotion.anger * 100).toFixed(2)}%</div>
@@ -136,6 +132,7 @@ const Card = (props) => {
                     <div>Sadness: {(props.faceEmotion.sadness * 100).toFixed(2)}%</div>
                     <div>Surprise: {(props.faceEmotion.surprise * 100).toFixed(2)}%</div>
                 </div>
+
             </div>
 
         </div>
@@ -145,27 +142,53 @@ const Card = (props) => {
 const CardList = (props) => {
     return (
         <div style={{ display: 'inline-block', overflowY: 'scroll', height: '40em' }}>
-            {props.cards.faces.map(card => <Card key={card.faceId} sessionId={props.cards.sessionId} lastImage={props.cards.lastImageId + props.cards.imageExtension} {...card} />)}
+            {props.cards.faces.map(card =>
+                <Card key={card.faceId} sessionId={props.cards.sessionId}
+                    lastImage={props.cards.lastImageId + props.cards.imageExtension} {...card} />
+             )}
         </div>
     );
 };
 
+const SessionList = (props) => {
+    return (
+        props.session.map( sessionNr => {
+            return <li style={{ listStyle: 'none' }}
+                key={sessionNr}>
+                <h4 >
+                    <span className="glyphicon glyphicon-folder-open btn-lg"></span>&emsp;
+                        <a href={"api/sessions/" +  sessionNr }>
+                            {sessionNr}
+                        </a>
+                </h4>
+            </li>
+        })
+    );
+}
+
 class FacesList extends React.Component {
     state = {
         data: [],
+        sessionList: [],
         sessionNumber: null,
         lastImageId: null,
         lastImageExtension: null,
     }
 
+    //We use getListOfSessions inside the componentDidMount
+    //Which it will trigger an extra rendering, but it will happen before the browser updates the screen.
     componentDidMount() {
-        this.test();
+        this.getListOfSessions();
     }
 
-    test = () => {
-        axios.get("api/sessions")
+    getListOfSessions = () => {
+        axios.get("api/sessions/json")
             .then(response => {
                 this.setState({ data: response.data }, () => console.log(this.state.data))
+            });
+        axios.get("api/sessions")
+            .then(response => {
+                this.setState({ sessionList: response.data }, () => console.log(this.state.sessionList))
             });
     };
 
@@ -204,6 +227,7 @@ class FacesList extends React.Component {
                     </div>
                     <br/><br/>
                     <h2>Session List</h2>
+                    <SessionList session={this.state.sessionList} />
                 </div>
             );
         }
