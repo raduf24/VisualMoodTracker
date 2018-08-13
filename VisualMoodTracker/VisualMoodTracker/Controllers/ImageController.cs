@@ -21,11 +21,11 @@ namespace VisualMoodTracker.Controllers
     [Route("api/sessions")]
     public class ImageController : Controller
     {
-        private readonly IFileProvider fileProvider;
+        private readonly IFileProvider FileProvider;
 
-        public ImageController(IFileProvider fileProvider)
+        public ImageController(IFileProvider FileProvider)
         {
-            this.fileProvider = fileProvider;
+            this.FileProvider = FileProvider;
         }
         public IActionResult Index()
         {
@@ -61,12 +61,12 @@ namespace VisualMoodTracker.Controllers
                 await fileUpload.CopyToAsync(stream);
             }
 
-            //return ID of image format from dateTime
-            List<FaceResult> facesList = GetResultFromImageAnalysis(Directory.GetCurrentDirectory() + "\\wwwroot\\sessions\\" + sessionId + "\\" + fileName);
+            List<FaceResult> facesList = GetResultFromImageAnalysis(Directory.GetCurrentDirectory() + 
+                "\\wwwroot\\sessions\\" + sessionId + "\\" + fileName);
 
             string json = JsonConvert.SerializeObject(facesList.ToArray());
 
-            json = AddTooJson(json, sessionId, fileId, fileUpload.GetFileExtension());
+            json = AddToJson(json, sessionId, fileId, fileUpload.GetFileExtension());
             System.IO.File.WriteAllText("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json", json);
 
             return Ok(json);
@@ -80,7 +80,29 @@ namespace VisualMoodTracker.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetImagesFromSession(string sessionId, string fileId)
+        public IActionResult GetSessions()
+        {
+            bool folderexists = System.IO.Directory.Exists("wwwroot\\sessions\\");
+            if (folderexists)
+            {
+                string path = Directory.GetCurrentDirectory() + "\\wwwroot\\sessions\\";
+                List<string> resultDirNames = new List<string>();
+
+                foreach (string s in Directory.GetDirectories(path))
+                {
+                    resultDirNames.Add(s.Remove(0, path.Length));
+                    Console.WriteLine(s.Remove(0, path.Length));
+                }
+                return Ok(resultDirNames);
+            }
+            else
+            {
+                return Ok(null);
+            }
+        }
+
+        [HttpGet("json")]
+        public IActionResult GetJsonFromSession(string sessionId, string fileId)
         {
             StringBuilder jsonAccess = new StringBuilder();
             jsonAccess.Append("wwwroot\\sessions\\").Append(sessionId);
@@ -96,6 +118,7 @@ namespace VisualMoodTracker.Controllers
             }
             else
             {
+                //if there wasn't created a session (no json file will be returned)
                 return Ok(null);
             }
         }
@@ -104,10 +127,11 @@ namespace VisualMoodTracker.Controllers
         [HttpGet("{sessionId}")]
         public IActionResult GetImageFromSession(string sessionId)
         {
+            //we have to return the images with the list of faces and properties from the session folder 
             return Ok(sessionId);
         }
 
-        private string AddTooJson(string json, string sessionId, int fileId, string extension)
+        private string AddToJson(string json, string sessionId, int fileId, string extension)
         {
             StringBuilder jsonBuilder = new StringBuilder();
             jsonBuilder.Append("{\"sessionId\":\"").Append(sessionId).Append("\",");
