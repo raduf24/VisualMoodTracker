@@ -2,10 +2,10 @@
 using System.IO;
 using System.Net.Http.Headers;
 using System.Net.Http;
-
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using ImageAnalysis.Properties;
 
 namespace ImageAnalysis
 {
@@ -53,16 +53,12 @@ namespace ImageAnalysis
             var client = new HttpClient();
 
             // Request headers - replace this example key with your valid key.
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "1eb74338631c40a48110b2b318c97e98"); // 
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Resources.Key); // 
 
-            // NOTE: You must use the same region in your REST call as you used to obtain your subscription keys.
-            //   For example, if you obtained your subscription keys from westcentralus, replace "westus" in the 
-            //   URI below with "westcentralus".
-            string uri = "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=true&returnFaceLandmarks=false&returnFaceAttributes=emotion";
+            string uri = Resources.AccesLink;
             HttpResponseMessage response;
             string responseContent;
 
-            // Request body. Try this sample with a locally stored JPEG image.
             byte[] byteData = GetImageAsByteArray(imageFilePath);
 
             using (var content = new ByteArrayContent(byteData))

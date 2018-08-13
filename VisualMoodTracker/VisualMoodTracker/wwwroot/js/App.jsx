@@ -200,7 +200,7 @@ class FacesList extends React.Component {
                 <div>
                     <h2> Create new session </h2>
                     <div>
-                        <UploadImage updateState={this.updateState.bind(this)}/>
+                        <UploadImage updateState={this.updateState.bind(this)} />
                     </div>
                     <br/><br/>
                     <h2>Session List</h2>

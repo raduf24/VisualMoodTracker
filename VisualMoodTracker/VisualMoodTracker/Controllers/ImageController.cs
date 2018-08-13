@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using VisualMoodTracker.Entities;
 using VisualMoodTracker.Models;
@@ -81,10 +82,14 @@ namespace VisualMoodTracker.Controllers
         [HttpGet]
         public IActionResult GetImagesFromSession(string sessionId, string fileId)
         {
-            bool exists = System.IO.File.Exists("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json");
+            StringBuilder jsonAccess = new StringBuilder();
+            jsonAccess.Append("wwwroot\\sessions\\").Append(sessionId);
+            jsonAccess.Append("\\").Append(fileId).Append(".json");
+
+            bool exists = System.IO.File.Exists(jsonAccess.ToString());
             if (exists)
             {
-                string result = System.IO.File.ReadAllText("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json");
+                string result = System.IO.File.ReadAllText(jsonAccess.ToString());
                 
                 //return json of session
                 return Ok(result);
@@ -104,11 +109,12 @@ namespace VisualMoodTracker.Controllers
 
         private string AddTooJson(string json, string sessionId, int fileId, string extension)
         {
-            json = "{" + "\"" + "sessionId" + "\"" + ":" + "\"" + sessionId + "\"" + ","
-                + "\"" + "lastImageId" + "\"" + ":" + "\"" + fileId + "\"" + ","
-                + "\"" + "imageExtension" + "\"" + ":" + "\"" + extension + "\"" + ","
-                + "\"" + "faces" + "\"" + ":" + json + "}";
-            return json;
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.Append("{\"sessionId\":\"").Append(sessionId).Append("\",");
+            jsonBuilder.Append("\"lastImageId\":\"").Append(fileId).Append("\",");
+            jsonBuilder.Append("\"imageExtension\":\"").Append(extension).Append("\",");
+            jsonBuilder.Append("\"faces\":").Append(json).Append("}");
+            return jsonBuilder.ToString();
         }
 
     }
