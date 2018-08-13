@@ -2,7 +2,7 @@
 class UploadImage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};  
+        this.state = {};
         this.fileUpload = this.fileUpload.bind(this);
     }
 
@@ -22,10 +22,12 @@ class UploadImage extends React.Component {
 
     downloadHandler = () => {
         try {
-            return axios.get("http://localhost:55847/api/sessions" + this.state.sessionId)
-                .then(function (response) {
-                    console.log(response.data)
-                });
+            return (
+                axios.get("http://localhost:55847/api/sessions" + this.state.sessionId)
+                    .then(function (response) {
+                        console.log(response.data)
+                    })
+            );
         } catch (error) {
             console.error(error);
         }
@@ -71,7 +73,7 @@ class UploadImage extends React.Component {
                 alert("You have to select an image first!");
             }
             document.getElementById('inputReset').value = '';
-        } 
+        }
     }
 
     render() {
@@ -82,8 +84,8 @@ class UploadImage extends React.Component {
                 <br />
                 &emsp;
                 <button className="btn btn-lg black-background white"
-                    onClick={this.fileUpload} disabled={!this.state.selectedFile} > Upload </button>
-                    &emsp; &emsp;
+                    onClick={this.fileUpload} disabled={!this.state.selectedFile}> Upload </button>
+                &emsp; &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.downloadHandler} disabled > Download </button>
             </div>
         );
@@ -111,16 +113,17 @@ const Card = (props) => {
             <div style={{ display: 'inline-flex' }}>
                 <div style={{
                     overflow: 'hidden', position: 'relative', width: thumbnailWidth, height: thumbnailHeight,
-                    float: 'right', marginLeft: '2em' }} >
-                
-                    <img src={imageName} 
+                    float: 'right', marginLeft: '2em'
+                }}>
+
+                    <img src={imageName} alt="Face"
                         style={{
                             position: 'absolute',
                             left: -((props.faceRectangle.left + props.faceRectangle.width / 2)) + (thumbnailWidth / 2),
-                            top: -(props.faceRectangle.top + props.faceRectangle.height / 2) + (thumbnailHeight / 2) }} />                    
+                            top: -(props.faceRectangle.top + props.faceRectangle.height / 2) + (thumbnailHeight / 2)
+                        }} />
 
                 </div>
-
                 <div style={{ display: 'inline-block', marginLeft: '1em' }}>
                     <div>ID: {props.faceId}</div>
                     <div>Anger: {(props.faceEmotion.anger * 100).toFixed(2)}%</div>
@@ -132,9 +135,7 @@ const Card = (props) => {
                     <div>Sadness: {(props.faceEmotion.sadness * 100).toFixed(2)}%</div>
                     <div>Surprise: {(props.faceEmotion.surprise * 100).toFixed(2)}%</div>
                 </div>
-
             </div>
-
         </div>
     );
 };
@@ -145,23 +146,25 @@ const CardList = (props) => {
             {props.cards.faces.map(card =>
                 <Card key={card.faceId} sessionId={props.cards.sessionId}
                     lastImage={props.cards.lastImageId + props.cards.imageExtension} {...card} />
-             )}
+            )}
         </div>
     );
 };
 
 const SessionList = (props) => {
     return (
-        props.session.map( sessionNr => {
-            return <li style={{ listStyle: 'none' }}
-                key={sessionNr}>
-                <h4 >
-                    <span className="glyphicon glyphicon-folder-open btn-lg"></span>&emsp;
-                        <a href={"api/sessions/" +  sessionNr }>
+        props.session.map(sessionNr => {
+            return (
+                <li style={{ listStyle: 'none' }}
+                    key={sessionNr}>
+                    <h4>
+                        <span className="glyphicon glyphicon-folder-open btn-lg" /> &emsp;
+                        <a href={"api/sessions/" + sessionNr}>
                             {sessionNr}
                         </a>
-                </h4>
-            </li>
+                    </h4>
+                </li>
+            );
         })
     );
 }
@@ -207,11 +210,12 @@ class FacesList extends React.Component {
                     <div>
                         <UploadImage updateState={this.updateState.bind(this)} />
                     </div>
-                    <br/>
+                    <br />
                     <div style={{ float: 'left' }}>
                         <h2> Session {this.state.sessionNumber}: </h2>
 
-                        <img src={".\\sessions\\" + this.state.sessionNumber + "\\" + this.state.lastImageId + this.state.lastImageExtension} style={{ width: '40em', height: '25em' }} />
+                        <img src={".\\sessions\\" + this.state.sessionNumber + "\\" + this.state.lastImageId + this.state.lastImageExtension} alt="Audience"
+                            style={{ width: '40em', height: '25em' }} />
                     </div>
                     <Form />
                     <CardList cards={this.state.data} />
@@ -225,7 +229,7 @@ class FacesList extends React.Component {
                     <div>
                         <UploadImage updateState={this.updateState.bind(this)} />
                     </div>
-                    <br/><br/>
+                    <br /><br />
                     <h2>Session List</h2>
                     <SessionList session={this.state.sessionList} />
                 </div>
