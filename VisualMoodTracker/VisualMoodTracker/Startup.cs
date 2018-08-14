@@ -74,6 +74,9 @@ namespace WebApplicationNETCore
                 //  .AddScriptWithoutTransform("~/Scripts/bundle.server.js");
 
                 config.SetLoadBabel(true).AddScript("~/js/App.jsx");
+                config.SetLoadBabel(true).AddScript("~/js/UploadImage.jsx");
+                config.SetLoadBabel(true).AddScript("~/js/ListWithFacesAndProperties.jsx");
+                config.SetLoadBabel(true).AddScript("~/js/SessionList.jsx");
             });
             app.UseStaticFiles();
 

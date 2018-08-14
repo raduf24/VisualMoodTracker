@@ -11,10 +11,16 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="React.AspNet" Version="3.4.0" />
+    <PackageReference Include="React.Core" Version="3.4.0" />
+    <PackageReference Include="Webpack" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\UploadImage.jsx" />
   </ItemGroup>
 
   <ItemGroup>
