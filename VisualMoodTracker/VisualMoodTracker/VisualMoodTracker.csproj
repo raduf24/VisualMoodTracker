@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageAnalysis\ImageAnalysis.csproj" />
+    <ProjectReference Include="..\ImageAnalysis\ImageAnalysis.csproj" />
   </ItemGroup>
 
 </Project>
