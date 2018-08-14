@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="React.AspNet" Version="3.4.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ImageAnalysis\ImageAnalysis.csproj" />
+    <ProjectReference Include="..\ImageAnalysis\ImageAnalysis.csproj" />
   </ItemGroup>
 
 </Project>

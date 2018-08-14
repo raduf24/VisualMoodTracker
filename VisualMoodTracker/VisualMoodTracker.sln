@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualMoodTracker", "VisualMoodTracker\VisualMoodTracker.csproj", "{743656E4-7B24-48E8-A6B3-D03F4189C67F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageAnalysis", "..\ImageAnalysis\ImageAnalysis.csproj", "{FD21FEB6-B1BC-4D11-A2E5-2C4314EC7975}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageAnalysis", "ImageAnalysis\ImageAnalysis.csproj", "{FD21FEB6-B1BC-4D11-A2E5-2C4314EC7975}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
