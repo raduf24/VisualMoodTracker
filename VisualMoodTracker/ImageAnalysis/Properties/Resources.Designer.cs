@@ -59,23 +59,5 @@ namespace ImageAnalysis.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=true&amp;returnFaceLandmarks=false&amp;returnFaceAttributes=emotion.
-        /// </summary>
-        internal static string AccesLink {
-            get {
-                return ResourceManager.GetString("AccesLink", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 1eb74338631c40a48110b2b318c97e98.
-        /// </summary>
-        internal static string Key {
-            get {
-                return ResourceManager.GetString("Key", resourceCulture);
-            }
-        }
     }
 }

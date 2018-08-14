@@ -117,12 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AccesLink" xml:space="preserve">
-    <value>https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=true&amp;returnFaceLandmarks=false&amp;returnFaceAttributes=emotion</value>
-    <comment>Link to send a picture to analyze</comment>
-  </data>
-  <data name="Key" xml:space="preserve">
-    <value>1eb74338631c40a48110b2b318c97e98</value>
-    <comment>Api key (trial)</comment>
-  </data>
 </root>

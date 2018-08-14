@@ -3,10 +3,13 @@ using AutoMapper;
 using ImageAnalysis;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -18,15 +21,21 @@ using VisualMoodTracker.Models;
 
 namespace VisualMoodTracker.Controllers
 {
+    
+
     [Route("api/sessions")]
     public class ImageController : Controller
     {
         private readonly IFileProvider FileProvider;
 
-        public ImageController(IFileProvider FileProvider)
+        public ImageController(IFileProvider FileProvider, IConfiguration configuration)
         {
             this.FileProvider = FileProvider;
+            Configuration = configuration;
         }
+
+        public IConfiguration Configuration { get; }
+
         public IActionResult Index()
         {
             return View();
@@ -73,8 +82,8 @@ namespace VisualMoodTracker.Controllers
         }
 
         public List<FaceResult> GetResultFromImageAnalysis(string fileLocation)
-        {           
-            ImageAnalyze analyzer = new ImageAnalyze();
+        {
+            ImageAnalyze analyzer = new ImageAnalyze(Configuration["key"], Configuration["url"]);
             List<FaceResult> lst = analyzer.GetResult(fileLocation);
             return lst;
         }
@@ -141,5 +150,19 @@ namespace VisualMoodTracker.Controllers
             return jsonBuilder.ToString();
         }
 
+        public IConfigurationSection GetSection(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IConfigurationSection> GetChildren()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IChangeToken GetReloadToken()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -6,14 +6,25 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using ImageAnalysis.Properties;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace ImageAnalysis
 {
     public class ImageAnalyze
     {
+        public string Key { get; set; }
+        public string Url { get; set; }
+        public ImageAnalyze(string key, string url)
+        {
+            Key = key;
+            Url = url;
+        }
+
         public List<FaceResult> GetResult(string imageFilePath)
         {
-            string result = MakeRequest(imageFilePath).Result;
+            string result = MakeRequest(imageFilePath,this.Key,this.Url).Result;
+            
 
             // Processing the JSON into manageable objects.
             JToken test = JArray.Parse(result);
@@ -48,16 +59,18 @@ namespace ImageAnalysis
             return binaryReader.ReadBytes((int)fileStream.Length);
         }
 
-        static async Task<string> MakeRequest(string imageFilePath)
+        static async Task<string> MakeRequest(string imageFilePath, string key, string url)
         {
             var client = new HttpClient();
 
-            // Request headers - replace this example key with your valid key.
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Resources.Key); // 
+            string responseContent = string.Empty;
 
-            string uri = Resources.AccesLink;
+            // Request headers - replace this example key with your valid key.
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key );
+
+            string uri = url;
             HttpResponseMessage response;
-            string responseContent;
+            //string responseContent;
 
             byte[] byteData = GetImageAsByteArray(imageFilePath);
 
