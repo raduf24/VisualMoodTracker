@@ -82,7 +82,7 @@ namespace WebApplicationNETCore
 
             AutoMapper.Mapper.Initialize(cfg =>
             {
-                cfg.CreateMap<VisualMoodTracker.Models.FileUploadViewModel, VisualMoodTracker.Entities.Image>();
+                cfg.CreateMap<VisualMoodTracker.Models.FileUploadViewModel, VisualMoodTracker.Models.Image>();
                 
             });
 
