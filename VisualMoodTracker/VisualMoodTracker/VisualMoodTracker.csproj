@@ -27,4 +27,8 @@
     <ProjectReference Include="..\ImageAnalysis\ImageAnalysis.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
 </Project>
