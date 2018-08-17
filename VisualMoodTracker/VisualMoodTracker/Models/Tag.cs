@@ -7,7 +7,7 @@ namespace VisualMoodTracker.Models
     public class Tag
     {
         [Key]
-        public Guid TagId { get; set; }
+        public int TagId { get; set; }
         [MaxLength(400)]
         public string Name { get; set; }
 

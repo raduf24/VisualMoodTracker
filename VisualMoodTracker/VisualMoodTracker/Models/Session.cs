@@ -7,7 +7,7 @@ namespace VisualMoodTracker.Models
     public class Session
     {
         [Key]
-        public Guid SessionId { get; set; }
+        public int SessionId { get; set; }
         [MaxLength(400)]
         public string Name { get; set; }
 

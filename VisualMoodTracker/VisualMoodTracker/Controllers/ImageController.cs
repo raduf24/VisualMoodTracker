@@ -11,14 +11,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using VisualMoodTracker.Contexts;
+using VisualMoodTracker.Models;
 
 namespace VisualMoodTracker.Controllers
 {
 
-
     [Route("api/sessions")]
     public class ImageController : Controller
     {
+        ImageContext _dbcontext = new ImageContext();
+
         private readonly IFileProvider FileProvider;
 
         public ImageController(IFileProvider FileProvider, IConfiguration configuration)
@@ -37,7 +40,6 @@ namespace VisualMoodTracker.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadFile(IFormFile fileUpload, string sessionId)
         {
-
             if (fileUpload == null || fileUpload.Length == 0)
                 return Content("file not selected");
 
@@ -49,6 +51,9 @@ namespace VisualMoodTracker.Controllers
                 if (!exists)
                 { System.IO.Directory.CreateDirectory("wwwroot\\sessions\\" + sessionId); }
             }
+
+            Session session = new Session();
+            _dbcontext.Sessions.Add(session);
 
             int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length/2) + 1;
 
@@ -63,14 +68,44 @@ namespace VisualMoodTracker.Controllers
                 await fileUpload.CopyToAsync(stream);
             }
 
+            Image img = new Image
+            {
+                Session = session,
+                Path = "wwwroot\\sessions\\" + sessionId + "\\" + fileName,
+                SessionId = session.SessionId
+            };
+            _dbcontext.Images.Add(img);
+
             List<FaceResult> facesList = GetResultFromImageAnalysis(Directory.GetCurrentDirectory() + 
                 "\\wwwroot\\sessions\\" + sessionId + "\\" + fileName);
+            
+            foreach (FaceResult faces in facesList)
+            {
+                Face face = new Face
+                {
+                    Width = faces.faceRectangle.width,
+                    Height = faces.faceRectangle.height,
+                    Top = faces.faceRectangle.top,
+                    Left = faces.faceRectangle.left,
+                    Anger = (float)faces.faceEmotion.anger,
+                    Contempt = (float)faces.faceEmotion.contempt,
+                    Disgust = (float)faces.faceEmotion.disgust,
+                    Fear = (float)faces.faceEmotion.fear,
+                    Happiness = (float)faces.faceEmotion.happiness,
+                    Neutral = (float)faces.faceEmotion.neutral,
+                    Sadness = (float)faces.faceEmotion.sadness,
+                    Surprise = (float)faces.faceEmotion.surprise,
+                    ImageId = img.ImageId
+                };
+                _dbcontext.Faces.Add(face);
+            }
 
             string json = JsonConvert.SerializeObject(facesList.ToArray());
 
             json = AddToJson(json, sessionId, fileId, fileUpload.GetFileExtension());
             System.IO.File.WriteAllText("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json", json);
 
+            _dbcontext.SaveChanges();
             return Ok(json);
         }
 

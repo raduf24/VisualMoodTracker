@@ -6,7 +6,7 @@ namespace VisualMoodTracker.Models
     public class Face
     {
         [Key]
-        public Guid FaceId { get; set; }
+        public int FaceId { get; set; }
 
         public float Width { get; set; }
 
@@ -32,7 +32,7 @@ namespace VisualMoodTracker.Models
 
         public float Surprise { get; set; }
 
-        public Guid ImageId { get; set; }
+        public int ImageId { get; set; }
 
         public Image Image { get; set; }
     }

@@ -7,7 +7,7 @@ namespace VisualMoodTracker.Models
     public class Image
     {
         [Key]
-        public Guid ImageId { get; set; }
+        public int ImageId { get; set; }
         [Required]
         [MaxLength(400)]
         public string Path { get; set; }

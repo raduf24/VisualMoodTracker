@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace VisualMoodTracker.Migrations
@@ -11,7 +12,8 @@ namespace VisualMoodTracker.Migrations
                 name: "Sessions",
                 columns: table => new
                 {
-                    SessionId = table.Column<Guid>(nullable: false),
+                    SessionId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 400, nullable: true),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(maxLength: 400, nullable: true)
@@ -25,7 +27,8 @@ namespace VisualMoodTracker.Migrations
                 name: "Tags",
                 columns: table => new
                 {
-                    TagId = table.Column<Guid>(nullable: false),
+                    TagId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 400, nullable: true)
                 },
                 constraints: table =>
@@ -37,32 +40,32 @@ namespace VisualMoodTracker.Migrations
                 name: "Images",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(nullable: false),
+                    ImageId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Path = table.Column<string>(maxLength: 400, nullable: false),
                     SessionId = table.Column<int>(nullable: false),
                     Width = table.Column<float>(nullable: false),
                     Height = table.Column<float>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
-                    Description = table.Column<string>(maxLength: 400, nullable: true),
-                    SessionId1 = table.Column<Guid>(nullable: true)
+                    Description = table.Column<string>(maxLength: 400, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.PrimaryKey("PK_Images", x => x.ImageId);
                     table.ForeignKey(
-                        name: "FK_Images_Sessions_SessionId1",
-                        column: x => x.SessionId1,
+                        name: "FK_Images_Sessions_SessionId",
+                        column: x => x.SessionId,
                         principalTable: "Sessions",
                         principalColumn: "SessionId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "SessionTag",
                 columns: table => new
                 {
-                    SessionId = table.Column<Guid>(nullable: false),
-                    TagId = table.Column<Guid>(nullable: false)
+                    SessionId = table.Column<int>(nullable: false),
+                    TagId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,7 +88,8 @@ namespace VisualMoodTracker.Migrations
                 name: "Faces",
                 columns: table => new
                 {
-                    FaceId = table.Column<Guid>(nullable: false),
+                    FaceId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Width = table.Column<float>(nullable: false),
                     Height = table.Column<float>(nullable: false),
                     Top = table.Column<float>(nullable: false),
@@ -98,7 +102,7 @@ namespace VisualMoodTracker.Migrations
                     Neutral = table.Column<float>(nullable: false),
                     Sadness = table.Column<float>(nullable: false),
                     Surprise = table.Column<float>(nullable: false),
-                    ImageId = table.Column<Guid>(nullable: false)
+                    ImageId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -107,7 +111,7 @@ namespace VisualMoodTracker.Migrations
                         name: "FK_Faces_Images_ImageId",
                         column: x => x.ImageId,
                         principalTable: "Images",
-                        principalColumn: "Id",
+                        principalColumn: "ImageId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -117,9 +121,9 @@ namespace VisualMoodTracker.Migrations
                 column: "ImageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Images_SessionId1",
+                name: "IX_Images_SessionId",
                 table: "Images",
-                column: "SessionId1");
+                column: "SessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SessionTag_TagId",

@@ -4,8 +4,8 @@ namespace VisualMoodTracker.Models
 {
     public class SessionTag
     {
-        public Guid SessionId { get; set; }
-        public Guid TagId { get; set; }
+        public int SessionId { get; set; }
+        public int TagId { get; set; }
 
         public Session Session { get; set; }
 

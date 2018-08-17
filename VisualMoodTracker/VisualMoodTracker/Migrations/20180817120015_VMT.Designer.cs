@@ -10,7 +10,7 @@ using VisualMoodTracker.Contexts;
 namespace VisualMoodTracker.Migrations
 {
     [DbContext(typeof(ImageContext))]
-    [Migration("20180817070903_VMT")]
+    [Migration("20180817120015_VMT")]
     partial class VMT
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,8 +23,9 @@ namespace VisualMoodTracker.Migrations
 
             modelBuilder.Entity("VisualMoodTracker.Models.Face", b =>
                 {
-                    b.Property<Guid>("FaceId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("FaceId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<float>("Anger");
 
@@ -38,7 +39,7 @@ namespace VisualMoodTracker.Migrations
 
                     b.Property<float>("Height");
 
-                    b.Property<Guid>("ImageId");
+                    b.Property<int>("ImageId");
 
                     b.Property<float>("Left");
 
@@ -61,8 +62,9 @@ namespace VisualMoodTracker.Migrations
 
             modelBuilder.Entity("VisualMoodTracker.Models.Image", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -77,21 +79,20 @@ namespace VisualMoodTracker.Migrations
 
                     b.Property<int>("SessionId");
 
-                    b.Property<Guid?>("SessionId1");
-
                     b.Property<float>("Width");
 
-                    b.HasKey("Id");
+                    b.HasKey("ImageId");
 
-                    b.HasIndex("SessionId1");
+                    b.HasIndex("SessionId");
 
                     b.ToTable("Images");
                 });
 
             modelBuilder.Entity("VisualMoodTracker.Models.Session", b =>
                 {
-                    b.Property<Guid>("SessionId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("SessionId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate");
 
@@ -108,9 +109,9 @@ namespace VisualMoodTracker.Migrations
 
             modelBuilder.Entity("VisualMoodTracker.Models.SessionTag", b =>
                 {
-                    b.Property<Guid>("SessionId");
+                    b.Property<int>("SessionId");
 
-                    b.Property<Guid>("TagId");
+                    b.Property<int>("TagId");
 
                     b.HasKey("SessionId", "TagId");
 
@@ -121,8 +122,9 @@ namespace VisualMoodTracker.Migrations
 
             modelBuilder.Entity("VisualMoodTracker.Models.Tag", b =>
                 {
-                    b.Property<Guid>("TagId")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("TagId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
                         .HasMaxLength(400);
@@ -144,7 +146,8 @@ namespace VisualMoodTracker.Migrations
                 {
                     b.HasOne("VisualMoodTracker.Models.Session", "Session")
                         .WithMany("Images")
-                        .HasForeignKey("SessionId1");
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("VisualMoodTracker.Models.SessionTag", b =>
