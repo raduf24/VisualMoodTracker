@@ -25,7 +25,7 @@ namespace VisualMoodTracker.Models
         [MaxLength(400)]
         public string Description { get; set; }
 
-        public IEnumerable<Face> Face { get; set; }
+        public IEnumerable<Face> Faces { get; set; }
 
         public Session Session { get; set; }
     }
