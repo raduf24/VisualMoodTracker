@@ -20,14 +20,15 @@ namespace VisualMoodTracker.Controllers
     [Route("api/sessions")]
     public class ImageController : Controller
     {
-        ImageContext _dbcontext = new ImageContext();
+        private ImageContext _dbcontext;
 
         private readonly IFileProvider FileProvider;
 
-        public ImageController(IFileProvider FileProvider, IConfiguration configuration)
+        public ImageController(IFileProvider FileProvider, IConfiguration configuration, ImageContext _dbcontext)
         {
             this.FileProvider = FileProvider;
             Configuration = configuration;
+            this._dbcontext = _dbcontext;
         }
 
         public IConfiguration Configuration { get; }
