@@ -1,5 +1,4 @@
 ﻿using APITestUpload.Models.Home;
-using AutoMapper;
 using ImageAnalysis;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,18 +8,13 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using VisualMoodTracker.Models;
 
 namespace VisualMoodTracker.Controllers
 {
-    
+
 
     [Route("api/sessions")]
     public class ImageController : Controller

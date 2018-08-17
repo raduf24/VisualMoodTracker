@@ -1,5 +1,3 @@
-using System;
-
 namespace VisualMoodTracker.Models
 {
     public class ErrorViewModel

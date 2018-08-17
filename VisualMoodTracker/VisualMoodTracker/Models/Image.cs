@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace VisualMoodTracker.Models
 {
     public class Image
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid ImageId { get; set; }
         [Required]
         [MaxLength(400)]
         public string Path { get; set; }

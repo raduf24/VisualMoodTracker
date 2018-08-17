@@ -1,14 +1,13 @@
 ﻿export default class UploadImage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            selectedFile: null,
+            formIsValid: false,
+            sessionId: null,
+            buttonValue: "Upload",
+        };
         this.fileUpload = this.fileUpload.bind(this);
-    }
-
-    state = {
-        selectedFile: null,
-        formIsValid: false,
-        sessionId: null,
     }
 
     fileChangedHandler = (event) => {
@@ -43,7 +42,10 @@
                 }
                 axios.post(url, formData, config).then(response => {
                     this.props.updateState(response.data);
-                    this.setState({ sessionId: response.data.sessionId, selectedFile: null });
+                    this.setState({
+                        sessionId: response.data.sessionId,
+                        selectedFile: null, buttonValue: "Add Image"
+                    });
                 });
             }
             else {
@@ -62,7 +64,10 @@
                 }
                 axios.post(url, formData, config).then(response => {
                     this.props.updateState(response.data);
-                    this.setState({ sessionId: response.data.sessionId, selectedFile: null });
+                    this.setState({
+                        sessionId: response.data.sessionId,
+                        selectedFile: null, buttonValue: "Add Image"
+                    });
                 });
             }
             else {
@@ -79,8 +84,10 @@
                 <input id="inputReset" type="file" accept="image/*" className="btn btn-lg" onChange={this.fileChangedHandler} />
                 <br />
                 &emsp;
-                <button className="btn btn-lg black-background white"
-                    onClick={this.fileUpload} disabled={!this.state.selectedFile} > Upload </button>
+                <button id="uploadButton" className="btn btn-lg black-background white"
+                    onClick={this.fileUpload} disabled={!this.state.selectedFile} >
+                    {this.state.buttonValue}
+                </button>
                 &emsp; &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.downloadHandler} disabled > Download </button>
             </div>
