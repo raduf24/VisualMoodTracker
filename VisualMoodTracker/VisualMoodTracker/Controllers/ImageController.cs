@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VisualMoodTracker.Contexts;
@@ -51,11 +52,16 @@ namespace VisualMoodTracker.Controllers
                 bool exists = System.IO.Directory.Exists("wwwroot\\sessions\\" + sessionId);
                 if (!exists)
                 { System.IO.Directory.CreateDirectory("wwwroot\\sessions\\" + sessionId); }
+
+                _dbcontext.Sessions.Add(
+                    new Session
+                {
+                    Name = sessionId
+                });
+                _dbcontext.SaveChanges();
             }
 
-            Session session = new Session();
-            session.Name = sessionId;
-            _dbcontext.Sessions.Add(session);
+            Session session = _dbcontext.Sessions.Last();
 
             int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length / 2) + 1;
 
@@ -72,7 +78,7 @@ namespace VisualMoodTracker.Controllers
 
             Image img = new Image
             {
-                Session = session,
+                Session = _dbcontext.Sessions.Last(),
                 Path = "wwwroot\\sessions\\" + sessionId + "\\" + fileName,
                 SessionId = session.SessionId
             };
@@ -97,7 +103,8 @@ namespace VisualMoodTracker.Controllers
                     Neutral = (float)faces.faceEmotion.neutral,
                     Sadness = (float)faces.faceEmotion.sadness,
                     Surprise = (float)faces.faceEmotion.surprise,
-                    ImageId = img.ImageId
+                    ImageId = img.ImageId,
+                    Image = img
                 };
                 _dbcontext.Faces.Add(face);
             }
@@ -125,7 +132,7 @@ namespace VisualMoodTracker.Controllers
             List<string> sessions = new List<string>();
             foreach (var session in _dbcontext.Sessions)
             {
-                sessions.Add(session.SessionId.ToString());
+                sessions.Add(session.Name);
             }
             return Ok(sessions);
         }
