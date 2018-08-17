@@ -19,12 +19,14 @@ namespace VisualMoodTracker.Contexts
                 .HasKey(s => new { s.SessionId, s.TagId });
             base.OnModelCreating(modelBuilder);
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    ////base.OnConfiguring(optionsBuilder);
+        //    //optionsBuilder.UseSqlServer(
+        //    //    "Server = (localdb)\\mssqllocaldb; Database = VMTData; Trusted_Connection = true");
+        //}
+        public ImageContext(DbContextOptions<ImageContext> options) : base(options)
         {
-            //base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer(
-                "Server = (localdb)\\mssqllocaldb; Database = VMTData; Trusted_Connection = true");
         }
-
     }
 }
