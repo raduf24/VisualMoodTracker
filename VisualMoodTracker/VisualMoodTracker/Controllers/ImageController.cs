@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VisualMoodTracker.Contexts;
 using VisualMoodTracker.Models;
+using System.Drawing;
 
 namespace VisualMoodTracker.Controllers
 {
@@ -56,8 +57,9 @@ namespace VisualMoodTracker.Controllers
                 _dbcontext.Sessions.Add(
                     new Session
                 {
-                    Name = sessionId
-                });
+                    Name = sessionId,
+                    CreationDate = System.DateTime.Now,
+            });
                 _dbcontext.SaveChanges();
             }
 
@@ -76,11 +78,16 @@ namespace VisualMoodTracker.Controllers
                 await fileUpload.CopyToAsync(stream);
             }
 
-            Image img = new Image
+            Bitmap image = new Bitmap("wwwroot\\sessions\\" + sessionId + "\\" + fileName);
+
+            Models.Image img = new Models.Image
             {
                 Session = _dbcontext.Sessions.Last(),
                 Path = "wwwroot\\sessions\\" + sessionId + "\\" + fileName,
-                SessionId = session.SessionId
+                SessionId = session.SessionId,
+                CreationDate = System.DateTime.Now,
+                Width = image.Width,
+                Height = image.Height,
             };
             _dbcontext.Images.Add(img);
 
