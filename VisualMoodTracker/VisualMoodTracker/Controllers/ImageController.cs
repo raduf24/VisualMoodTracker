@@ -125,7 +125,7 @@ namespace VisualMoodTracker.Controllers
             List<string> sessions = new List<string>();
             foreach (var session in _dbcontext.Sessions)
             {
-                sessions.Add(session.Name.ToString());
+                sessions.Add(session.SessionId.ToString());
             }
             return Ok(sessions);
         }
