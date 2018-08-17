@@ -53,9 +53,10 @@ namespace VisualMoodTracker.Controllers
             }
 
             Session session = new Session();
+            session.Name = sessionId;
             _dbcontext.Sessions.Add(session);
 
-            int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length/2) + 1;
+            int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length / 2) + 1;
 
             string fileName = fileId + fileUpload.GetFileExtension();
 
@@ -76,9 +77,9 @@ namespace VisualMoodTracker.Controllers
             };
             _dbcontext.Images.Add(img);
 
-            List<FaceResult> facesList = GetResultFromImageAnalysis(Directory.GetCurrentDirectory() + 
+            List<FaceResult> facesList = GetResultFromImageAnalysis(Directory.GetCurrentDirectory() +
                 "\\wwwroot\\sessions\\" + sessionId + "\\" + fileName);
-            
+
             foreach (FaceResult faces in facesList)
             {
                 Face face = new Face
@@ -106,6 +107,7 @@ namespace VisualMoodTracker.Controllers
             System.IO.File.WriteAllText("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json", json);
 
             _dbcontext.SaveChanges();
+
             return Ok(json);
         }
 
@@ -119,78 +121,70 @@ namespace VisualMoodTracker.Controllers
         [HttpGet]
         public IActionResult GetSessions()
         {
-            bool folderexists = System.IO.Directory.Exists("wwwroot\\sessions\\");
-            if (folderexists)
+            List<string> sessions = new List<string>();
+            foreach (var session in _dbcontext.Sessions)
             {
-                string path = Directory.GetCurrentDirectory() + "\\wwwroot\\sessions\\";
-                List<string> resultDirNames = new List<string>();
-
-                foreach (string s in Directory.GetDirectories(path))
-                {
-                    resultDirNames.Add(s.Remove(0, path.Length));
-                    Console.WriteLine(s.Remove(0, path.Length));
-                }
-                return Ok(resultDirNames);
+                sessions.Add(session.Name.ToString());
             }
-            else
-            {
-                return Ok(null);
-            }
+            return Ok(sessions);
         }
+    
 
-        [HttpGet("json")]
-        public IActionResult GetJsonFromSession(string sessionId, string fileId)
+    [HttpGet("json")]
+    public IActionResult GetJsonFromSession(string sessionId, string fileId)
+    {
+        StringBuilder jsonAccess = new StringBuilder();
+        jsonAccess.Append("wwwroot\\sessions\\").Append(sessionId);
+        jsonAccess.Append("\\").Append(fileId).Append(".json");
+
+        bool exists = System.IO.File.Exists(jsonAccess.ToString());
+        if (exists)
         {
-            StringBuilder jsonAccess = new StringBuilder();
-            jsonAccess.Append("wwwroot\\sessions\\").Append(sessionId);
-            jsonAccess.Append("\\").Append(fileId).Append(".json");
+            string result = System.IO.File.ReadAllText(jsonAccess.ToString());
 
-            bool exists = System.IO.File.Exists(jsonAccess.ToString());
-            if (exists)
-            {
-                string result = System.IO.File.ReadAllText(jsonAccess.ToString());
-                
-                //return json of session
-                return Ok(result);
-            }
-            else
-            {
-                //if there wasn't created a session (no json file will be returned)
-                return Ok(null);
-            }
+            //var faces = _dbcontext.Faces;
+
+            //return json of session
+            return Ok(Json(result));
         }
-
-        //TASK NR 5
-        [HttpGet("{sessionId}")]
-        public IActionResult GetImageFromSession(string sessionId)
+        else
         {
-            //we have to return the images with the list of faces and properties from the session folder 
-            return Ok(sessionId);
-        }
-
-        private string AddToJson(string json, string sessionId, int fileId, string extension)
-        {
-            StringBuilder jsonBuilder = new StringBuilder();
-            jsonBuilder.Append("{\"sessionId\":\"").Append(sessionId).Append("\",");
-            jsonBuilder.Append("\"lastImageId\":\"").Append(fileId).Append("\",");
-            jsonBuilder.Append("\"imageExtension\":\"").Append(extension).Append("\",");
-            jsonBuilder.Append("\"faces\":").Append(json).Append("}");
-            return jsonBuilder.ToString();
-        }
-
-        public IConfigurationSection GetSection(string key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<IConfigurationSection> GetChildren()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IChangeToken GetReloadToken()
-        {
-            throw new NotImplementedException();
+            //if there wasn't created a session (no json file will be returned)
+            return Ok(null);
         }
     }
+
+    //TASK NR 5
+    [HttpGet("{sessionId}")]
+    public IActionResult GetImageFromSession(string sessionId)
+    {
+        //we have to return the images with the list of faces and properties from the session folder 
+        return Ok(sessionId);
+    }
+
+    private string AddToJson(string json, string sessionId, int fileId, string extension)
+    {
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.Append("{\"sessionId\":\"").Append(sessionId).Append("\",");
+        jsonBuilder.Append("\"lastImageId\":\"").Append(fileId).Append("\",");
+        jsonBuilder.Append("\"imageExtension\":\"").Append(extension).Append("\",");
+        jsonBuilder.Append("\"faces\":").Append(json).Append("}");
+        return jsonBuilder.ToString();
+    }
+
+    public IConfigurationSection GetSection(string key)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<IConfigurationSection> GetChildren()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IChangeToken GetReloadToken()
+    {
+        throw new NotImplementedException();
+    }
+}
 }
