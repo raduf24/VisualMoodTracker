@@ -28,22 +28,22 @@ const Card = (props) => {
                     <img src={imageName}
                         style={{
                             position: 'absolute',
-                            left: -((props.faceRectangle.left + props.faceRectangle.width / 2)) + (thumbnailWidth / 2),
-                            top: -(props.faceRectangle.top + props.faceRectangle.height / 2) + (thumbnailHeight / 2)
+                            left: -((props.Left + props.Width / 2)) + (thumbnailWidth / 2),
+                            top: -(props.Top + props.Height / 2) + (thumbnailHeight / 2)
                         }} />
 
                 </div>
 
                 <div style={{ display: 'inline-block', marginLeft: '1em' }}>
-                    <div>ID: {props.faceId}</div>
-                    <div>Anger: {(props.faceEmotion.anger * 100).toFixed(2)}%</div>
-                    <div>Contempt: {(props.faceEmotion.contempt * 100).toFixed(2)}%</div>
-                    <div>Disgust: {(props.faceEmotion.disgust * 100).toFixed(2)}%</div>
-                    <div>Fear: {(props.faceEmotion.fear * 100).toFixed(2)}%</div>
-                    <div>Happiness: {(props.faceEmotion.happiness * 100).toFixed(2)}%</div>
-                    <div>Neutral: {(props.faceEmotion.neutral * 100).toFixed(2)}%</div>
-                    <div>Sadness: {(props.faceEmotion.sadness * 100).toFixed(2)}%</div>
-                    <div>Surprise: {(props.faceEmotion.surprise * 100).toFixed(2)}%</div>
+                    <div>ID: {props.FaceId}</div>
+                    <div>Anger: {(props.Anger * 100).toFixed(2)}%</div>
+                    <div>Contempt: {(props.Contempt * 100).toFixed(2)}%</div>
+                    <div>Disgust: {(props.Disgust * 100).toFixed(2)}%</div>
+                    <div>Fear: {(props.Fear * 100).toFixed(2)}%</div>
+                    <div>Happiness: {(props.Happiness * 100).toFixed(2)}%</div>
+                    <div>Neutral: {(props.Neutral * 100).toFixed(2)}%</div>
+                    <div>Sadness: {(props.Sadness * 100).toFixed(2)}%</div>
+                    <div>Surprise: {(props.Surprise * 100).toFixed(2)}%</div>
                 </div>
 
             </div>
@@ -56,7 +56,7 @@ const CardList = (props) => {
     return (
         <div style={{ display: 'inline-block', overflowY: 'scroll', height: '40em' }}>
             {props.cards.faces.map(card =>
-                <Card key={card.faceId} sessionId={props.cards.sessionId}
+                <Card key={card.FaceId} sessionId={props.cards.sessionId}
                     lastImage={props.cards.lastImageId + props.cards.imageExtension} {...card} />
             )}
         </div>
@@ -87,7 +87,8 @@ export default class FacesList extends React.Component {
              .then(response => {
                  this.setState({ sessionList: response.data })
              });
-
+         //Use Getjson to see if there isn't an active session
+         //data will be null, we will be at the starting page
          axios.get("api/sessions/json")
             .then(response => {
                 this.setState({ data: response.data })

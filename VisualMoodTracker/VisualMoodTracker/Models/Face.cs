@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace VisualMoodTracker.Models
@@ -33,7 +34,7 @@ namespace VisualMoodTracker.Models
         public float Surprise { get; set; }
 
         public int ImageId { get; set; }
-
+        [JsonIgnore]
         public Image Image { get; set; }
     }
 }

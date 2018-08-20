@@ -56,16 +56,16 @@ namespace VisualMoodTracker.Controllers
 
                 _dbcontext.Sessions.Add(
                     new Session
-                {
-                    Name = sessionId,
-                    CreationDate = System.DateTime.Now,
-            });
+                    {
+                        Name = sessionId,
+                        CreationDate = System.DateTime.Now,
+                    });
                 _dbcontext.SaveChanges();
             }
 
             Session session = _dbcontext.Sessions.Last();
 
-            int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length / 2) + 1;
+            int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length) + 1;
 
             string fileName = fileId + fileUpload.GetFileExtension();
 
@@ -116,12 +116,18 @@ namespace VisualMoodTracker.Controllers
                 _dbcontext.Faces.Add(face);
             }
 
-            string json = JsonConvert.SerializeObject(facesList.ToArray());
+            //string json = JsonConvert.SerializeObject(facesList.ToArray());
 
-            json = AddToJson(json, sessionId, fileId, fileUpload.GetFileExtension());
-            System.IO.File.WriteAllText("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json", json);
+            //json = AddToJson(json, sessionId, fileId, fileUpload.GetFileExtension());
+            //System.IO.File.WriteAllText("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json", json);
 
             _dbcontext.SaveChanges();
+            //Getting the faces with the last image id
+            var facesPresent = _dbcontext.Faces.Where(x => x.Image == img);
+            //Serializing them to a Json
+            string json = JsonConvert.SerializeObject(facesPresent);
+            //Adding the proprties we need
+            json = AddToJson(json, sessionId, fileId, fileUpload.GetFileExtension());
 
             return Ok(json);
         }
@@ -143,63 +149,54 @@ namespace VisualMoodTracker.Controllers
             }
             return Ok(sessions);
         }
-    
 
-    [HttpGet("json")]
-    public IActionResult GetJsonFromSession(string sessionId, string fileId)
-    {
-        StringBuilder jsonAccess = new StringBuilder();
-        jsonAccess.Append("wwwroot\\sessions\\").Append(sessionId);
-        jsonAccess.Append("\\").Append(fileId).Append(".json");
 
-        bool exists = System.IO.File.Exists(jsonAccess.ToString());
-        if (exists)
+        [HttpGet("json")]
+        public IActionResult GetJsonFromSession(IFormFile fileUpload, string sessionId, int fileId)
         {
-            string result = System.IO.File.ReadAllText(jsonAccess.ToString());
 
-            //var faces = _dbcontext.Faces;
+            var session = _dbcontext.Sessions.Where(x => x.Name == sessionId);
 
-            //return json of session
-            return Ok(Json(result));
+            if (session == null)
+            {
+                return Ok(null);
+            }
+
+            return Ok(session);
+
         }
-        else
+
+        //TASK NR 5
+        [HttpGet("{sessionId}")]
+        public IActionResult GetImageFromSession(string sessionId)
         {
-            //if there wasn't created a session (no json file will be returned)
-            return Ok(null);
+            //we have to return the images with the list of faces and properties from the session folder 
+            return Ok(sessionId);
+        }
+
+        private string AddToJson(string json, string sessionId, int fileId, string extension)
+        {
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.Append("{\"sessionId\":\"").Append(sessionId).Append("\",");
+            jsonBuilder.Append("\"lastImageId\":\"").Append(fileId).Append("\",");
+            jsonBuilder.Append("\"imageExtension\":\"").Append(extension).Append("\",");
+            jsonBuilder.Append("\"faces\":").Append(json).Append("}");
+            return jsonBuilder.ToString();
+        }
+
+        public IConfigurationSection GetSection(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IConfigurationSection> GetChildren()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IChangeToken GetReloadToken()
+        {
+            throw new NotImplementedException();
         }
     }
-
-    //TASK NR 5
-    [HttpGet("{sessionId}")]
-    public IActionResult GetImageFromSession(string sessionId)
-    {
-        //we have to return the images with the list of faces and properties from the session folder 
-        return Ok(sessionId);
-    }
-
-    private string AddToJson(string json, string sessionId, int fileId, string extension)
-    {
-        StringBuilder jsonBuilder = new StringBuilder();
-        jsonBuilder.Append("{\"sessionId\":\"").Append(sessionId).Append("\",");
-        jsonBuilder.Append("\"lastImageId\":\"").Append(fileId).Append("\",");
-        jsonBuilder.Append("\"imageExtension\":\"").Append(extension).Append("\",");
-        jsonBuilder.Append("\"faces\":").Append(json).Append("}");
-        return jsonBuilder.ToString();
-    }
-
-    public IConfigurationSection GetSection(string key)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<IConfigurationSection> GetChildren()
-    {
-        throw new NotImplementedException();
-    }
-
-    public IChangeToken GetReloadToken()
-    {
-        throw new NotImplementedException();
-    }
-}
 }
