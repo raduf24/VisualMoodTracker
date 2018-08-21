@@ -16,6 +16,7 @@ const Card = (props) => {
     const thumbnailWidth = 180;
     const thumbnailHeight = 180;
     const imageName = "./sessions/" + props.sessionId + "/" + props.lastImage;
+    const zoomFactor = (thumbnailWidth / props.Width) - (1 / props.Height / props.Width);
 
     return (
         <div style={{ margin: '1em' }}>
@@ -25,12 +26,11 @@ const Card = (props) => {
                     float: 'right', marginLeft: '2em'
                 }} >
 
-                    <img src={imageName}
-                        style={{
-                            position: 'absolute',
-                            left: -((props.Left + props.Width / 2)) + (thumbnailWidth / 2),
-                            top: -(props.Top + props.Height / 2) + (thumbnailHeight / 2)
-                        }} />
+                    <img src={imageName} style={{
+                        zoom: zoomFactor * 100 + '%', position: 'absolute',
+                        left: (- props.Left + zoomFactor * -props.Width / 2) + (thumbnailWidth / 2),
+                        top: (-props.Top + zoomFactor * -props.Height / 2) + (thumbnailHeight / 2)
+                    }} />
 
                 </div>
 
