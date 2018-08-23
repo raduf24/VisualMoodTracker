@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,9 +22,8 @@ namespace VisualMoodTracker.Models
         public DateTime CreationDate { get; set; }
         [MaxLength(400)]
         public string Description { get; set; }
-
         public IEnumerable<Face> Faces { get; set; }
-
+        [JsonIgnore]
         public Session Session { get; set; }
     }
 }

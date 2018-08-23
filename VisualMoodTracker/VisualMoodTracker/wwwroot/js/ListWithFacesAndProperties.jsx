@@ -15,7 +15,7 @@ class Form extends React.Component {
 const Card = (props) => {
     const thumbnailWidth = 180;
     const thumbnailHeight = 180;
-    const imageName = "./sessions/" + props.sessionId + "/" + props.lastImage;
+    const imageName = props.lastImagePath;
 
     return (
         <div style={{ margin: '1em' }}>
@@ -28,22 +28,22 @@ const Card = (props) => {
                     <img src={imageName}
                         style={{
                             position: 'absolute',
-                            left: -((props.Left + props.Width / 2)) + (thumbnailWidth / 2),
-                            top: -(props.Top + props.Height / 2) + (thumbnailHeight / 2)
+                            left: -((props.left + props.width / 2)) + (thumbnailWidth / 2),
+                            top: -(props.top + props.height / 2) + (thumbnailHeight / 2)
                         }} />
 
                 </div>
 
                 <div style={{ display: 'inline-block', marginLeft: '1em' }}>
-                    <div>ID: {props.FaceId}</div>
-                    <div>Anger: {(props.Anger * 100).toFixed(2)}%</div>
-                    <div>Contempt: {(props.Contempt * 100).toFixed(2)}%</div>
-                    <div>Disgust: {(props.Disgust * 100).toFixed(2)}%</div>
-                    <div>Fear: {(props.Fear * 100).toFixed(2)}%</div>
-                    <div>Happiness: {(props.Happiness * 100).toFixed(2)}%</div>
-                    <div>Neutral: {(props.Neutral * 100).toFixed(2)}%</div>
-                    <div>Sadness: {(props.Sadness * 100).toFixed(2)}%</div>
-                    <div>Surprise: {(props.Surprise * 100).toFixed(2)}%</div>
+                    <div>ID: {props.faceId}</div>
+                    <div>Anger: {(props.anger * 100).toFixed(2)}%</div>
+                    <div>Contempt: {(props.contempt * 100).toFixed(2)}%</div>
+                    <div>Disgust: {(props.disgust * 100).toFixed(2)}%</div>
+                    <div>Fear: {(props.fear * 100).toFixed(2)}%</div>
+                    <div>Happiness: {(props.happiness * 100).toFixed(2)}%</div>
+                    <div>Neutral: {(props.neutral * 100).toFixed(2)}%</div>
+                    <div>Sadness: {(props.sadness * 100).toFixed(2)}%</div>
+                    <div>Surprise: {(props.surprise * 100).toFixed(2)}%</div>
                 </div>
 
             </div>
@@ -55,10 +55,12 @@ const Card = (props) => {
 const CardList = (props) => {
     return (
         <div style={{ display: 'inline-block', overflowY: 'scroll', height: '40em' }}>
-            {props.cards.faces.map(card =>
-                <Card key={card.FaceId} sessionId={props.cards.sessionId}
-                    lastImage={props.cards.lastImageId + props.cards.imageExtension} {...card} />
-            )}
+            {props.cards.faces.map(card => {
+                return  <Card key={card.faceId}
+                    lastImagePath={props.cards.path}
+                {...card} />
+            }
+    )}
         </div>
     );
 };
@@ -66,74 +68,25 @@ const CardList = (props) => {
 export default class FacesList extends React.Component {
     constructor(props) {
         super(props);
-    };
-
-    state = {
-        data: [],
-        sessionList: [],
-        sessionNumber: null,
-        lastImageId: null,
-        lastImageExtension: null,
-    }
-
-    //We use getListOfSessions inside the componentDidMount
-    //Which it will trigger an extra rendering, but it will happen before the browser updates the screen.
-    componentDidMount() {
-        this.getListOfSessions();
-    }
-
-     getListOfSessions = () => {
-         axios.get("api/sessions")
-             .then(response => {
-                 this.setState({ sessionList: response.data })
-             });
-         //Use Getjson to see if there isn't an active session
-         //data will be null, we will be at the starting page
-         axios.get("api/sessions/json")
-            .then(response => {
-                this.setState({ data: response.data })
-            });
-    };
-
-    updateState = (value) => {
-        this.setState({ data: value });
-        this.setState({ sessionNumber: value.sessionId });
-        this.setState({ lastImageId: value.lastImageId });
-        this.setState({ lastImageExtension: value.imageExtension });
+        this.state = props;
     };
 
     render() {
-        if (this.state.data != "") {
-            return (
+        return (
+            <div>
+                <h2> Add image to session </h2>
                 <div>
-                    <h2> Add image to session </h2>
-                    <div>
-                        <UploadImage updateState={this.updateState.bind(this)} />
-                    </div>
+                    <UploadImage buttonValue="Add Image" sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} />
+                </div>
                     <br />
-                    <div style={{ float: 'left' }}>
-                        <h2> Session {this.state.sessionNumber}: </h2>
+                <div style={{ float: 'left' }}>
+                    <h2> Session {this.props.data.name}: </h2>
+                    <img src={this.props.data.images[this.props.data.images.length - 1].path} style={{ width: '40em', height: '25em' }} />
+                </div>
 
-                        <img src={".\\sessions\\" + this.state.sessionNumber + "\\"
-                            + this.state.lastImageId + this.state.lastImageExtension} style={{ width: '40em', height: '25em' }} />
-                    </div>
-                    <Form />
-                    <CardList cards={this.state.data} />
-                </div>
+                <Form />
+                <CardList cards={this.props.data.images[this.props.data.images.length - 1]} />
+            </div>
             );
-        }
-        else {
-            return (
-                <div>
-                    <h2> Create new session </h2>
-                        <div>
-                            <UploadImage updateState={this.updateState.bind(this)} />
-                        </div>
-                        <br /><br />
-                    <h2>Session List</h2>
-                    <SessionList session={this.state.sessionList} />
-                </div>
-            );
-        }
     }
 }

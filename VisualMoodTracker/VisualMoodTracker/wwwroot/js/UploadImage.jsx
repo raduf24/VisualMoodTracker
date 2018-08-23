@@ -1,13 +1,14 @@
-﻿export default class UploadImage extends React.Component {
+﻿import FacesListAndSessionList from "./ListWithFacesAndProperties.jsx";
+
+export default class UploadImage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             selectedFile: null,
             formIsValid: false,
             sessionId: null,
-            buttonValue: "Upload",
-        };
-        this.fileUpload = this.fileUpload.bind(this);
+            buttonValue: this.props.buttonValue,
+        };       
     }
 
     fileChangedHandler = (event) => {
@@ -30,23 +31,26 @@
 
     fileUpload = () => {
         const url = "/api/sessions";
-        if (this.state.sessionId != null) {
+        if (this.props.sessionId != null) {
             if (this.state.formIsValid) {
                 const formData = new FormData();
                 formData.append('fileUpload', this.state.selectedFile);
-                formData.append('sessionId', this.state.sessionId);
+                formData.append('sessionId', this.props.sessionId);
                 const config = {
                     headers: {
                         'content-type': 'multipart/form-data'
                     }
                 }
-                axios.post(url, formData, config).then(response => {
-                    this.props.updateState(response.data);
-                    this.setState({
-                        sessionId: response.data.sessionId,
-                        selectedFile: null, buttonValue: "Add Image"
+                try {
+                    axios.post(url + "/" + this.props.sessionId, formData, config).then(response => {
+                        this.props.updateState(response.data);
+                        this.setState({ selectedFile: null });
                     });
-                });
+                       
+                }
+                catch (ex) {
+                    console.log(ex);
+                }
             }
             else {
                 alert("You have to select an image first!");
@@ -62,13 +66,15 @@
                         'content-type': 'multipart/form-data'
                     }
                 }
-                axios.post(url, formData, config).then(response => {
-                    this.props.updateState(response.data);
-                    this.setState({
-                        sessionId: response.data.sessionId,
-                        selectedFile: null, buttonValue: "Add Image"
+                try {
+                    axios.post(url + "/" + null, formData, config).then(response => {
+                        this.props.updateState(response.data);
+                        window.location.hash = "sessionId=" + response.data.name;
                     });
-                });
+                }
+                catch (ex) {
+                    console.log(ex);
+                }
             }
             else {
                 alert("You have to select an image first!");
@@ -86,7 +92,7 @@
                 &emsp;
                 <button id="uploadButton" className="btn btn-lg black-background white"
                     onClick={this.fileUpload} disabled={!this.state.selectedFile} >
-                    {this.state.buttonValue}
+                    {this.props.buttonValue}
                 </button>
                 &emsp; &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.downloadHandler} disabled > Download </button>
