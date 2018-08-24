@@ -5,6 +5,7 @@
     border: 16px solid tomato;
     border-top: 16px solid #fff;
     animation: spin 2s linear infinite;
+    align-self: center;
 }
 
 @keyframes spin {

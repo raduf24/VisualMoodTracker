@@ -15,43 +15,9 @@ class App extends React.Component {
         };
     }
 
-    componentWillMount() {
-        this.getListOfSessions();
-    }
-
     componentDidMount() {
         this.updateURL();
     }
-
-    getListOfSessions = () => {
-        axios.get("api/sessions")
-            .then(response => {
-                this.setState({ sessionList: response.data })
-            });
-        //Use Getjson to see if there isn't an active session
-        //data will be null, we will be at the starting page
-        axios.get("api/sessions/json")
-            .then(response => {
-                this.setState({ data: response.data })
-            });
-
-        if (this.state.sessionNumber != null) {
-            try {
-                axios.get("api/sessions/" + this.state.sessionNumber)
-                    .then(response => {
-                        if (response.data.name != null) {
-                            this.setState({ data: response.data });
-                        }
-                        else {
-                            //console.log("Name is null");
-                        }
-                    });
-            }
-            catch (ex) {
-                console.log(ex);
-            }
-        }
-    };
 
     updateState = (value) => {
         this.setState({ data: value });
@@ -98,7 +64,7 @@ class App extends React.Component {
         else {
             return (
                 <div>                    
-                    <SessionList session={this.state.sessionList} updateState={this.updateState.bind(this)} />
+                    <SessionList updateState={this.updateState.bind(this)} />
                 </div>
             );
         }

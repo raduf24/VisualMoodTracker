@@ -17,6 +17,7 @@ using VisualMoodTracker.Contexts;
 using VisualMoodTracker.Models;
 using System.Drawing;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using System.Linq.Expressions;
 
 namespace VisualMoodTracker.Controllers
 {
@@ -145,31 +146,21 @@ namespace VisualMoodTracker.Controllers
         }
 
         [HttpGet("sessions")]
-        public IActionResult GetSessions()
+        public IEnumerable<Session> GetSessions(string columnName, string sortKey)
         {
-            List<string> sessions = new List<string>();
-            foreach (var session in _dbcontext.Sessions)
+            var parameter = Expression.Parameter(typeof(Session), "x"); //{x}
+            var body = Expression.Convert(Expression.Property(parameter, columnName), typeof(object)); //{x.SessionId} converted to object
+            var lambda = Expression.Lambda<Func<Session, object>>(body, parameter).Compile();
+            if (sortKey == "asc")
             {
-                sessions.Add(session.Name);
+                return _dbcontext.Sessions.OrderBy(lambda).ToList();
             }
-            return Ok(sessions);
+            else
+            {
+                return _dbcontext.Sessions.OrderByDescending(lambda).ToList();
+            }
         }
 
-
-        [HttpGet("sessions/json")]
-        public IActionResult GetJsonFromSession(IFormFile fileUpload, string sessionId, int fileId)
-        {
-
-            var session = _dbcontext.Sessions.Where(x => x.Name == sessionId);
-
-            if (session == null)
-            {
-                return Ok(null);
-            }
-
-            return Ok(session);
-
-        }
 
         [HttpGet("sessions/{sessionId}")]
         public IActionResult GetImageFromSession(string sessionId)
@@ -196,17 +187,6 @@ namespace VisualMoodTracker.Controllers
                 return Ok(new Session() { Name = null, Images = new List<VisualMoodTracker.Models.Image>()});
             }
 
-        }
-
-        private string AddToJson(string json, string imagePath, string sessionId, int fileId, string extension)
-        {
-            StringBuilder jsonBuilder = new StringBuilder();
-            jsonBuilder.Append("{\"lastImagePath\":\"").Append(imagePath.Replace("\\", "/").Replace("wwwroot/", "")).Append("\",");
-            jsonBuilder.Append("\"sessionId\":\"").Append(sessionId).Append("\",");
-            jsonBuilder.Append("\"lastImageId\":\"").Append(fileId).Append("\",");
-            jsonBuilder.Append("\"imageExtension\":\"").Append(extension).Append("\",");
-            jsonBuilder.Append("\"faces\":").Append(json).Append("}");
-            return jsonBuilder.ToString();
         }
 
         public IConfigurationSection GetSection(string key)
