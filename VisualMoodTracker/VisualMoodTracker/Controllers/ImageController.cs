@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using VisualMoodTracker.Contexts;
 using VisualMoodTracker.Models;
 using System.Drawing;
+using System.Linq.Expressions;
 
 namespace VisualMoodTracker.Controllers
 {
@@ -140,40 +141,20 @@ namespace VisualMoodTracker.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetSessions()
+        public IEnumerable<Session> GetSessions(string columnName, string sortKey)
         {
-            List<string> sessions = new List<string>();
-            foreach (var session in _dbcontext.Sessions)
+            var parameter = Expression.Parameter(typeof(Session), "x"); //{x}
+            var body = Expression.Convert(Expression.Property(parameter, columnName), typeof(object)); //{x.SessionId} converted to object
+            var lambda = Expression.Lambda<Func<Session, object>>(body, parameter).Compile();
+            if (sortKey == "asc")
             {
-                sessions.Add(session.Name);
+                return _dbcontext.Sessions.OrderBy(lambda).ToList();
             }
-            return Ok(sessions);
-        }
-
-
-        [HttpGet("json")]
-        public IActionResult GetJsonFromSession(IFormFile fileUpload, string sessionId, int fileId)
-        {
-
-            var session = _dbcontext.Sessions.Where(x => x.Name == sessionId);
-
-            if (session == null)
+            else
             {
-                return Ok(null);
+                return _dbcontext.Sessions.OrderByDescending(lambda).ToList();
             }
-
-            return Ok(session);
-
         }
-
-        //TASK NR 5
-        [HttpGet("{sessionId}")]
-        public IActionResult GetImageFromSession(string sessionId)
-        {
-            //we have to return the images with the list of faces and properties from the session folder 
-            return Ok(sessionId);
-        }
-
         private string AddToJson(string json, string sessionId, int fileId, string extension)
         {
             StringBuilder jsonBuilder = new StringBuilder();

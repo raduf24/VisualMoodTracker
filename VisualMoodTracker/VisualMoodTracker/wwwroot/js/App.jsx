@@ -3,12 +3,10 @@ import FacesList from "./ListWithFacesAndProperties.jsx";
 
 class App extends React.Component {
 
-    render() {        
+    render() {
         return (
-            <div>
-                <div>
-                    <FacesList />
-                </div>
+            <div >
+                <FacesList />  
             </div>
         );
     }

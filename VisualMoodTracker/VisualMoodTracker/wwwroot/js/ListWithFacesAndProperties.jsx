@@ -70,30 +70,11 @@ export default class FacesList extends React.Component {
 
     state = {
         data: [],
-        sessionList: [],
         sessionNumber: null,
         lastImageId: null,
         lastImageExtension: null,
     }
 
-    //We use getListOfSessions inside the componentDidMount
-    //Which it will trigger an extra rendering, but it will happen before the browser updates the screen.
-    componentDidMount() {
-        this.getListOfSessions();
-    }
-
-     getListOfSessions = () => {
-         axios.get("api/sessions")
-             .then(response => {
-                 this.setState({ sessionList: response.data })
-             });
-         //Use Getjson to see if there isn't an active session
-         //data will be null, we will be at the starting page
-         axios.get("api/sessions/json")
-            .then(response => {
-                this.setState({ data: response.data })
-            });
-    };
 
     updateState = (value) => {
         this.setState({ data: value });
@@ -130,8 +111,7 @@ export default class FacesList extends React.Component {
                             <UploadImage updateState={this.updateState.bind(this)} />
                         </div>
                         <br /><br />
-                    <h2>Session List</h2>
-                    <SessionList session={this.state.sessionList} />
+                    <SessionList />
                 </div>
             );
         }
