@@ -1,81 +1,53 @@
-﻿
+﻿import UploadImage from "./UploadImage.jsx";
+
+const List = (props) => {
+    //At onClick event we use return false, because we don't want to run/trigger the event automatically
+    return(
+        props.sessions.props.session.map(sessionNr => {            
+        return <li style={{ listStyle: 'none' }}
+            key={sessionNr}>
+            <h4 >
+                <span className="glyphicon glyphicon-folder-open btn-lg"></span>&emsp;
+                        <a onClick={() => {
+                            props.sessions.getSession(sessionNr);
+                            window.location.hash = "sessionId=" + sessionNr; return false;
+                        }} >
+                    {sessionNr}
+                </a>
+            </h4>
+        </li>
+        })
+    );
+}
 
 export default class SessionList extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            sessionList: [],
-            loading: true,
-            isSortAsc: true,
-            columnName: 'sessionId',
-        };   
-    }
+            sessionNr: props.sessionNr,
+            updateState: props.updateState,
+        }
+    };
 
-    onSort = (columnName) => {
-        const url = "/api/sessions";
-        axios.get(url, {
-            params: {
-                'columnName': columnName,
-                'sortKey': this.state.isSortAsc ? "asc" : "desc"
-            }
-        })
-            .then(response => {
-                this.setState(prevState => ({
-                    sessionList: response.data,
-                    loading: false,
-                    isSortAsc:
-                        prevState.columnName == columnName
-                            ? !prevState.isSortAsc
-                            : true,
-                }));
-            });
-    }
-
-    onClick = (columnChanged) => {
-        this.setState({
-            columnName: columnChanged,
-            loading: true
-        });
-
-    }
-
-    renderEmployeeTable(sessionList) {
-        return (
-            <table className='table' /*style={{ 'max-height': '300px', 'overflow': 'scroll', 'display': 'block' }}*/ /*style={{ 'max-height': '500px'; 'overflow': 'auto'}}*/>
-                <thead >
-                    <tr>
-                        <th></th>
-                        <th onClick={() => this.onClick('SessionId')}>SessionId</th>
-                        <th onClick={() => this.onClick('Name')}>Name</th>
-                        <th onClick={() => this.onClick('CreationDate')}>CreationDate</th>
-                        <th onClick={() => this.onClick('Description')}>Description</th>
-                    </tr>
-                </thead>
-                <tbody >
-                    {sessionList.map(emp =>
-                        <tr key={emp.sessionId} >
-                            <td></td>
-                            <td onClick={() => { alert(emp.sessionId) }}>{emp.sessionId}</td>
-                            <td onClick={() => { alert(emp.name) }}>{emp.name}</td>
-                            <td onClick={() => { alert(emp.creationDate) }}>{emp.creationDate}</td>
-                            <td onClick={() => { alert(emp.description) }}>{emp.description}</td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-        );
-    }
+    getSession = (sessionNr) => {
+        if (sessionNr != null) {
+            axios.get("/api/sessions/" + sessionNr)
+                .then(response => {                    
+                    this.state.updateState(response.data);
+                });
+        }
+    };
 
     render() {
-        let contents = this.state.loading
-            ? this.onSort(this.state.columnName) 
-            : this.renderEmployeeTable(this.state.sessionList);
-
-        return (
+        return (     
             <div>
+                <h2> Create new session </h2>
+                <div>
+                    <UploadImage buttonValue="Upload" updateState={this.state.updateState.bind(this)} />
+                </div>
+                    <br /><br />
                 <h2>Session List</h2>
-
-                {contents}
+                    <List sessions={this} />
             </div>
         );
     }

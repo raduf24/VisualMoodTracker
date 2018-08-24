@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,12 @@ using System.Threading.Tasks;
 using VisualMoodTracker.Contexts;
 using VisualMoodTracker.Models;
 using System.Drawing;
-using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace VisualMoodTracker.Controllers
 {
 
-    [Route("api/sessions")]
+    [Route("api")]
     public class ImageController : Controller
     {
         private ImageContext _dbcontext;
@@ -41,13 +42,13 @@ namespace VisualMoodTracker.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("sessions/{sessionId}")]        
         public async Task<IActionResult> UploadFile(IFormFile fileUpload, string sessionId)
         {
             if (fileUpload == null || fileUpload.Length == 0)
                 return Content("file not selected");
 
-            if (sessionId == null)
+            if (sessionId == "null")
             {
                 sessionId = DateTime.Now.ToString("yyyyMMddHHmmss");
 
@@ -64,7 +65,7 @@ namespace VisualMoodTracker.Controllers
                 _dbcontext.SaveChanges();
             }
 
-            Session session = _dbcontext.Sessions.Last();
+            Session session = _dbcontext.Sessions.Where(s=> s.Name == sessionId).First();
 
             int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length) + 1;
 
@@ -92,6 +93,8 @@ namespace VisualMoodTracker.Controllers
             };
             _dbcontext.Images.Add(img);
 
+            string imagePath = img.Path;
+
             List<FaceResult> facesList = GetResultFromImageAnalysis(Directory.GetCurrentDirectory() +
                 "\\wwwroot\\sessions\\" + sessionId + "\\" + fileName);
 
@@ -117,20 +120,21 @@ namespace VisualMoodTracker.Controllers
                 _dbcontext.Faces.Add(face);
             }
 
-            //string json = JsonConvert.SerializeObject(facesList.ToArray());
-
-            //json = AddToJson(json, sessionId, fileId, fileUpload.GetFileExtension());
-            //System.IO.File.WriteAllText("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".json", json);
-
             _dbcontext.SaveChanges();
-            //Getting the faces with the last image id
-            var facesPresent = _dbcontext.Faces.Where(x => x.Image == img);
-            //Serializing them to a Json
-            string json = JsonConvert.SerializeObject(facesPresent);
-            //Adding the proprties we need
-            json = AddToJson(json, sessionId, fileId, fileUpload.GetFileExtension());
 
-            return Ok(json);
+            var res = _dbcontext.Sessions
+                .Include(s => s.Images)
+                .ThenInclude(i => i.Faces)
+                .Where(s => s.Name == sessionId).First(); 
+
+            res.Images = res.Images.OrderBy(i => i.CreationDate);
+
+            foreach (var imageFromDB in res.Images)
+            {
+                imageFromDB.Path = imageFromDB.Path.Replace("wwwroot\\", "");
+            }
+
+            return Ok(res);
         }
 
         public List<FaceResult> GetResultFromImageAnalysis(string fileLocation)
@@ -140,25 +144,65 @@ namespace VisualMoodTracker.Controllers
             return lst;
         }
 
-        [HttpGet]
-        public IEnumerable<Session> GetSessions(string columnName, string sortKey)
+        [HttpGet("sessions")]
+        public IActionResult GetSessions()
         {
-            var parameter = Expression.Parameter(typeof(Session), "x"); //{x}
-            var body = Expression.Convert(Expression.Property(parameter, columnName), typeof(object)); //{x.SessionId} converted to object
-            var lambda = Expression.Lambda<Func<Session, object>>(body, parameter).Compile();
-            if (sortKey == "asc")
+            List<string> sessions = new List<string>();
+            foreach (var session in _dbcontext.Sessions)
             {
-                return _dbcontext.Sessions.OrderBy(lambda).ToList();
+                sessions.Add(session.Name);
             }
-            else
-            {
-                return _dbcontext.Sessions.OrderByDescending(lambda).ToList();
-            }
+            return Ok(sessions);
         }
-        private string AddToJson(string json, string sessionId, int fileId, string extension)
+
+
+        [HttpGet("sessions/json")]
+        public IActionResult GetJsonFromSession(IFormFile fileUpload, string sessionId, int fileId)
+        {
+
+            var session = _dbcontext.Sessions.Where(x => x.Name == sessionId);
+
+            if (session == null)
+            {
+                return Ok(null);
+            }
+
+            return Ok(session);
+
+        }
+
+        [HttpGet("sessions/{sessionId}")]
+        public IActionResult GetImageFromSession(string sessionId)
+        {
+            try
+            {
+                var res = _dbcontext.Sessions
+                    .Include(s => s.Images)
+                    .ThenInclude(i => i.Faces)
+                    .Where(s => s.Name == sessionId).First();
+
+                res.Images = res.Images.OrderBy(i => i.CreationDate);
+
+                foreach (var image in res.Images)
+                {
+                    image.Path = image.Path.Replace("wwwroot\\", "");
+                }
+
+                return Ok(res);
+
+            }
+            catch(Exception ex)
+            {
+                return Ok(new Session() { Name = null, Images = new List<VisualMoodTracker.Models.Image>()});
+            }
+
+        }
+
+        private string AddToJson(string json, string imagePath, string sessionId, int fileId, string extension)
         {
             StringBuilder jsonBuilder = new StringBuilder();
-            jsonBuilder.Append("{\"sessionId\":\"").Append(sessionId).Append("\",");
+            jsonBuilder.Append("{\"lastImagePath\":\"").Append(imagePath.Replace("\\", "/").Replace("wwwroot/", "")).Append("\",");
+            jsonBuilder.Append("\"sessionId\":\"").Append(sessionId).Append("\",");
             jsonBuilder.Append("\"lastImageId\":\"").Append(fileId).Append("\",");
             jsonBuilder.Append("\"imageExtension\":\"").Append(extension).Append("\",");
             jsonBuilder.Append("\"faces\":").Append(json).Append("}");
