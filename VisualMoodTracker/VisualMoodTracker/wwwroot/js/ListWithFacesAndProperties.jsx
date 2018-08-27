@@ -80,7 +80,7 @@ export default class FacesList extends React.Component {
         return (
             <div>
                 <h2> Add image to session </h2>
-                <div>
+                <div >
                     <UploadImage buttonValue="Add Image" sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} />
                 </div>
                 <br />

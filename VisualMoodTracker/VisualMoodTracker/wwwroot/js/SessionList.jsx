@@ -50,10 +50,10 @@ export default class SessionList extends React.Component {
 
     }
 
-    renderEmployeeTable(sessionList) {
+    renderSessionTable(sessionList) {
         return (
             <div >
-                <table className='table'>
+                <table >
                     <thead >
                         <tr>
                             <th></th>
@@ -87,7 +87,7 @@ export default class SessionList extends React.Component {
     render() {
         let contents = this.state.loading
             ? this.onSort(this.state.columnName)
-            : this.renderEmployeeTable(this.state.sessionList);
+            : this.renderSessionTable(this.state.sessionList);
         return (
             <div>
                 <h2> Create new session </h2>
