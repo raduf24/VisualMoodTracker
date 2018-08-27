@@ -8,7 +8,7 @@ table {
     border-radius: 1em;
     border-collapse: collapse;
     margin: 1em;
-    
+
 }
 
 th {
@@ -18,14 +18,12 @@ th {
     font-weight: 600;
     padding: 0.5em 1em;
     text-align: left;
-
 }
 
 td {
     color: #fff;
     font-weight: 400;
     padding: 0.65em 1em;
-
 }
 
 
