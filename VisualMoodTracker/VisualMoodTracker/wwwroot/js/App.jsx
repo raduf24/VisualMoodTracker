@@ -49,21 +49,20 @@ class App extends React.Component {
                 window.location.hash = window.location.hash.split('#')[0];
             }
         }
-        
-    }
 
+    }
 
     render() {
         if (this.state.data != "" && this.state.data.name != null) {
-                return (
-                    <div>
-                        <FacesList data={this.state.data} updateState={this.updateState.bind(this)} />
-                    </div>
-                );
+            return (
+                <div>
+                    <FacesList data={this.state.data} updateState={this.updateState.bind(this)} />
+                </div>
+            );
         }
         else {
             return (
-                <div>                    
+                <div>
                     <SessionList updateState={this.updateState.bind(this)} />
                 </div>
             );

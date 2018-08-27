@@ -23,8 +23,8 @@ namespace ImageAnalysis
 
         public List<FaceResult> GetResult(string imageFilePath)
         {
-            string result = MakeRequest(imageFilePath,this.Key,this.Url).Result;
-            
+            string result = MakeRequest(imageFilePath, this.Key, this.Url).Result;
+
 
             // Processing the JSON into manageable objects.
             JToken test = JArray.Parse(result);
@@ -66,7 +66,7 @@ namespace ImageAnalysis
             string responseContent = string.Empty;
 
             // Request headers - replace this example key with your valid key.
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key );
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key);
 
             string uri = url;
             HttpResponseMessage response;

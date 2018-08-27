@@ -43,7 +43,7 @@ namespace VisualMoodTracker.Controllers
             return View();
         }
 
-        [HttpPost("sessions/{sessionId}")]        
+        [HttpPost("sessions/{sessionId}")]
         public async Task<IActionResult> UploadFile(IFormFile fileUpload, string sessionId)
         {
             if (fileUpload == null || fileUpload.Length == 0)
@@ -66,7 +66,7 @@ namespace VisualMoodTracker.Controllers
                 _dbcontext.SaveChanges();
             }
 
-            Session session = _dbcontext.Sessions.Where(s=> s.Name == sessionId).First();
+            Session session = _dbcontext.Sessions.Where(s => s.Name == sessionId).First();
 
             int fileId = (Directory.GetFiles("wwwroot\\sessions\\" + sessionId, "*", SearchOption.AllDirectories).Length) + 1;
 
@@ -126,7 +126,7 @@ namespace VisualMoodTracker.Controllers
             var res = _dbcontext.Sessions
                 .Include(s => s.Images)
                 .ThenInclude(i => i.Faces)
-                .Where(s => s.Name == sessionId).First(); 
+                .Where(s => s.Name == sessionId).First();
 
             res.Images = res.Images.OrderBy(i => i.CreationDate);
 
@@ -182,12 +182,56 @@ namespace VisualMoodTracker.Controllers
                 return Ok(res);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Ok(new Session() { Name = null, Images = new List<VisualMoodTracker.Models.Image>()});
+                return Ok(new Session() { Name = null, Images = new List<VisualMoodTracker.Models.Image>() });
             }
 
         }
+
+
+        [HttpGet("sessions/{sessionID}/summary")]
+        public IActionResult GetFacesFromImagesFromSession(int sessionId)
+        {
+
+
+            var GaphPointList = _dbcontext.Images.Where(i => i.SessionId == sessionId)
+               .Include(i => i.Faces)
+               .Select(i => new GraphPoint
+               {
+                   ImageId = i.ImageId,
+                   FeelingAverages = {
+                       new KeyValuePair<string, float>("Anger", i.Faces.Average(f => f.Anger)),
+                       new KeyValuePair<string, float>("Contempt", i.Faces.Average(f => f.Contempt)),
+                       new KeyValuePair<string, float>("Fear", i.Faces.Average(f => f.Fear)),
+                       new KeyValuePair<string, float>("Happiness", i.Faces.Average(f => f.Happiness)),
+                       new KeyValuePair<string, float>("Neutral", i.Faces.Average(f => f.Neutral)),
+                       new KeyValuePair<string, float>("Sadness", i.Faces.Average(f => f.Sadness)),
+                       new KeyValuePair<string, float>("Surprise", i.Faces.Average(f => f.Surprise)),
+                       new KeyValuePair<string, float>("Disgust", i.Faces.Average(f => f.Disgust)),
+                   }
+               });
+            return Ok(GaphPointList);
+        }
+
+
+
+        //private IEnumerable<GraphPoint> GetFeelingsAverage(IEnumerable<GraphPoint> graphPoints)
+        //{
+        //    foreach (GraphPoint graphPoint in graphPoints)
+        //    {
+        //        int noOfFeelings = 0;
+        //        graphPoint.FeelingAverage = 0;
+        //        foreach (Feeling feeling in graphPoint.FeelingFromEveryImage)
+        //        {
+        //            graphPoint.FeelingAverage = graphPoint.FeelingAverage + feeling.ValueOfTheFeeling;
+        //            noOfFeelings++;
+        //        }
+        //        graphPoint.FeelingAverage = graphPoint.FeelingAverage / noOfFeelings;
+        //    }
+        //    return graphPoints;
+        //}
+
 
         public IConfigurationSection GetSection(string key)
         {
