@@ -20,11 +20,18 @@ class App extends React.Component {
     }
 
     updateState = (value) => {
-        this.setState({ data: value });
-        this.setState({ lastImagePath: value.lastImagePath });
-        this.setState({ sessionNumber: value.sessionId });
-        this.setState({ lastImageId: value.lastImageId });
-        this.setState({ lastImageExtension: value.imageExtension });
+        //this.setState({ data: value });
+        //this.setState({ lastImagePath: value.lastImagePath });
+        //this.setState({ sessionNumber: value.sessionId });
+        //this.setState({ lastImageId: value.lastImageId });
+        //this.setState({ lastImageExtension: value.imageExtension });
+        this.setState({
+            data: value,
+            lastImagePath: value.lastImagePath,
+            sessionNumber: value.sessionId,
+            lastImageId: value.lastImageId,
+            astImageExtension: value.imageExtension
+        })
     };
 
     updateURL() {

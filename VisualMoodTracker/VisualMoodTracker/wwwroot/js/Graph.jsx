@@ -3,17 +3,12 @@
         super(props);
     };
 
-    componentDidMount() {
-        this.getGraphData();
-    }
-
     getGraphData = () => {
         axios.get("api/sessions/" + this.props.sessionId + "/summary")
             .then(response => {
                 this.updateCanvas(response.data);
             });
     };
-
 
     updateCanvas(data) {
         var labels = [], angerAverages = [], contemptAverages = [], fearAverages = [], happinessAverages = [], neutralAverages = [], sadnessAverages = [], surpriseAverages = [], disgustAverages = [];
@@ -132,9 +127,11 @@
     }
 
     render() {
+        this.getGraphData()
         return (
             <div>
                 <canvas ref="canvas" width={350} height={350} />
+               
             </div>
         );
     }
