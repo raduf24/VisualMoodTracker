@@ -58,7 +58,6 @@ class App extends React.Component {
     }
 
     render() {
-
         if (this.state.data != "" && this.state.data.name != null) {
                 return (
                     <div>

@@ -11,11 +11,10 @@ export default class WebcamCapture extends React.Component {
         }
     };
 
-    componentDidUpdate() {
+    componentDidMount() {
         if (this.props.autoStartWebcam == true && this.props.sessionId != null && this.state.videoOn == false) {
             this.startWebcam();
         }
-        console.log(this.props.autoStartWebcam);
     }
 
     componentWillUnmount() {
