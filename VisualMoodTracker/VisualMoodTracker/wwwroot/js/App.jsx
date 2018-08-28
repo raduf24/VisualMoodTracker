@@ -12,6 +12,7 @@ class App extends React.Component {
             lastImageId: null,
             lastImageExtension: null,
             lastImagePath: null,
+            autoStartWebcam: false,
         };
     }
 
@@ -19,12 +20,14 @@ class App extends React.Component {
         this.updateURL();
     }
 
-    updateState = (value) => {
+    updateState = (value, autoStartWebcam) => {
+        this.state.autoStartWebcam = autoStartWebcam;
         this.setState({ data: value });
         this.setState({ lastImagePath: value.lastImagePath });
         this.setState({ sessionNumber: value.sessionId });
         this.setState({ lastImageId: value.lastImageId });
         this.setState({ lastImageExtension: value.imageExtension });
+        //this.setState({ autoStartWebcam: autoStartWebcam });
     };
 
     updateURL() {
@@ -37,7 +40,7 @@ class App extends React.Component {
             return (
                 axios.get("/api/sessions/" + c)
                     .then(response => {
-                        this.updateState(response.data);
+                        this.updateState(response.data, true);
                     }).then(() => {
                         if (this.state.data.name == null) {
                             window.location.hash = window.location.hash.split('#')[0];
@@ -54,10 +57,11 @@ class App extends React.Component {
 
 
     render() {
+
         if (this.state.data != "" && this.state.data.name != null) {
                 return (
                     <div>
-                        <FacesList data={this.state.data} updateState={this.updateState.bind(this)} />
+                        <FacesList data={this.state.data} updateState={this.updateState.bind(this)} autoStartWebcam={this.state.autoStartWebcam} />
                     </div>
                 );
         }

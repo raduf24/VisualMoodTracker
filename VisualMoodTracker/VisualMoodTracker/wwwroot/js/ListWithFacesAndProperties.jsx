@@ -1,5 +1,6 @@
 ﻿import UploadImage from "./UploadImage.jsx";
 import SessionList from "./SessionList.jsx";
+import WebcamCapture from "./WebcamCapture.jsx";
 
 class Form extends React.Component {
     render() {
@@ -70,7 +71,7 @@ const CardList = (props) => {
 export default class FacesList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = props;
+        this.state = props;      
     };
 
     render() {
@@ -79,6 +80,9 @@ export default class FacesList extends React.Component {
                 <h2> Add image to session </h2>
                 <div >
                     <UploadImage buttonValue="Add Image" sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} />
+                </div>
+                <div>
+                    <WebcamCapture sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} autoStartWebcam={this.props.autoStartWebcam} />
                 </div>
                     <br />
                 <div style={{ float: 'left' }}>

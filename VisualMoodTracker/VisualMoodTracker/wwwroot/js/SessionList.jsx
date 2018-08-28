@@ -1,4 +1,5 @@
 ﻿import UploadImage from "./UploadImage.jsx";
+import WebcamCapture from "./WebcamCapture.jsx";
 
 export default class SessionList extends React.Component {
     constructor(props) {
@@ -93,6 +94,9 @@ export default class SessionList extends React.Component {
                 <h2> Create new session </h2>
                 <div>
                     <UploadImage buttonValue="Upload" updateState={this.state.updateState.bind(this)} />
+                </div>
+                <div>
+                    <WebcamCapture updateState={this.props.updateState.bind(this)}/>
                 </div>
                 <br /><br />
                 <h2>Session List</h2>
