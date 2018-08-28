@@ -21,13 +21,14 @@ class App extends React.Component {
     }
 
     updateState = (value, autoStartWebcam) => {
-		this.autoStartWebcam = autoStartWebcam
+        this.state.autoStartWebcam = autoStartWebcam;
         this.setState({
             data: value,
             lastImagePath: value.lastImagePath,
             sessionNumber: value.sessionId,
             lastImageId: value.lastImageId,
-            astImageExtension: value.imageExtension
+            astImageExtension: value.imageExtension,
+            autoStartWebcam: autoStartWebcam
         })
     };
 
