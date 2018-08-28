@@ -21,13 +21,14 @@ class App extends React.Component {
     }
 
     updateState = (value, autoStartWebcam) => {
-        this.state.autoStartWebcam = autoStartWebcam;
-        this.setState({ data: value });
-        this.setState({ lastImagePath: value.lastImagePath });
-        this.setState({ sessionNumber: value.sessionId });
-        this.setState({ lastImageId: value.lastImageId });
-        this.setState({ lastImageExtension: value.imageExtension });
-        //this.setState({ autoStartWebcam: autoStartWebcam });
+		this.autoStartWebcam = autoStartWebcam
+        this.setState({
+            data: value,
+            lastImagePath: value.lastImagePath,
+            sessionNumber: value.sessionId,
+            lastImageId: value.lastImageId,
+            astImageExtension: value.imageExtension
+        })
     };
 
     updateURL() {
@@ -40,7 +41,7 @@ class App extends React.Component {
             return (
                 axios.get("/api/sessions/" + c)
                     .then(response => {
-                        this.updateState(response.data, true);
+                        this.updateState(response.data);
                     }).then(() => {
                         if (this.state.data.name == null) {
                             window.location.hash = window.location.hash.split('#')[0];
@@ -52,22 +53,21 @@ class App extends React.Component {
                 window.location.hash = window.location.hash.split('#')[0];
             }
         }
-        
-    }
 
+    }
 
     render() {
 
         if (this.state.data != "" && this.state.data.name != null) {
                 return (
                     <div>
-                        <FacesList data={this.state.data} updateState={this.updateState.bind(this)} autoStartWebcam={this.state.autoStartWebcam} />
+                        <FacesList data={this.state.data} updateState={this.updateState.bind(this)} autoStartWebcam={this.state.autoStartWebcam}/>
                     </div>
                 );
         }
         else {
             return (
-                <div>                    
+                <div>
                     <SessionList updateState={this.updateState.bind(this)} />
                 </div>
             );

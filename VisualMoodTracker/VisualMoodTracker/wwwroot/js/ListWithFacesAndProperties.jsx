@@ -1,6 +1,8 @@
 ﻿import UploadImage from "./UploadImage.jsx";
 import SessionList from "./SessionList.jsx";
+import Graph from "./Graph.jsx";
 import WebcamCapture from "./WebcamCapture.jsx";
+
 
 class Form extends React.Component {
     render() {
@@ -59,11 +61,11 @@ const CardList = (props) => {
     return (
         <div style={{ display: 'inline-block', overflowY: 'scroll', height: '40em' }}>
             {props.cards.faces.map(card => {
-                return  <Card key={card.faceId}
+                return <Card key={card.faceId}
                     lastImagePath={props.cards.path}
-                {...card} />
+                    {...card} />
             }
-    )}
+            )}
         </div>
     );
 };
@@ -71,7 +73,8 @@ const CardList = (props) => {
 export default class FacesList extends React.Component {
     constructor(props) {
         super(props);
-        this.state = props;      
+        this.state = props;
+
     };
 
     render() {
@@ -88,11 +91,15 @@ export default class FacesList extends React.Component {
                 <div style={{ float: 'left' }}>
                     <h2> Session {this.props.data.name}: </h2>
                     <img src={this.props.data.images[this.props.data.images.length - 1].path} style={{ width: '40em', height: '25em' }} />
+                    <br />
+                    <br />
+                    <br />
+                    <Graph sessionId={this.props.data.sessionId} />
                 </div>
 
                 <Form />
                 <CardList cards={this.props.data.images[this.props.data.images.length - 1]} />
             </div>
-            );
+        );
     }
 }

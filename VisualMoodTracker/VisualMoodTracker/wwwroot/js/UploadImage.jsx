@@ -8,7 +8,7 @@ export default class UploadImage extends React.Component {
             formIsValid: false,
             sessionId: null,
             buttonValue: this.props.buttonValue,
-        };       
+        };
     }
 
     fileChangedHandler = (event) => {
@@ -46,7 +46,7 @@ export default class UploadImage extends React.Component {
                         this.props.updateState(response.data);
                         this.setState({ selectedFile: null });
                     });
-                       
+
                 }
                 catch (ex) {
                     console.log(ex);

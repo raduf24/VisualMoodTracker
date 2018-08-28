@@ -29,7 +29,7 @@ namespace WebApplicationNETCore
             services.AddMvc();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddReact();
-            
+
             services.AddSingleton<IFileProvider>(
                 new PhysicalFileProvider(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot")));
             services.Configure<FormOptions>(x =>
@@ -83,7 +83,7 @@ namespace WebApplicationNETCore
             AutoMapper.Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<VisualMoodTracker.Models.FileUploadViewModel, VisualMoodTracker.Models.Image>();
-                
+
             });
 
             app.UseMvc(routes =>
