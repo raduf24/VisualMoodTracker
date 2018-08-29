@@ -95,6 +95,7 @@ export default class SessionList extends React.Component {
                 <div>
                     <UploadImage buttonValue="Upload" updateState={this.state.updateState.bind(this)} />
                 </div>
+                <br />
                 <div>
                     <WebcamCapture updateState={this.props.updateState.bind(this)}/>
                 </div>

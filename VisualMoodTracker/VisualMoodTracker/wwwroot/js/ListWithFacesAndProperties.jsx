@@ -84,6 +84,7 @@ export default class FacesList extends React.Component {
                 <div >
                     <UploadImage buttonValue="Add Image" sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} />
                 </div>
+                <br />
                 <div>
                     <WebcamCapture sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} autoStartWebcam={this.props.autoStartWebcam} />
                 </div>
