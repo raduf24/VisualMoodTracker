@@ -291,14 +291,12 @@ namespace VisualMoodTracker.Controllers
         [HttpGet("sessions/{sessionID}/summary")]
         public IActionResult GetFacesFromImagesFromSession(int sessionId)
         {
-
-
-            var GaphPointList = _dbcontext.Images.Where(i => i.SessionId == sessionId)
-               .Include(i => i.Faces)
-               .Select(i => new GraphPoint
-               {
-                   ImageId = i.ImageId,
-                   FeelingAverages = {
+                var GraphPointList = _dbcontext.Images.Where(i => i.SessionId == sessionId)
+                   .Include(i => i.Faces)
+                   .Select(i => new GraphPoint
+                   {
+                       ImageId = i.ImageId,
+                       FeelingAverages = {
                        new KeyValuePair<string, float>("Anger", i.Faces.Average(f => f.Anger)),
                        new KeyValuePair<string, float>("Contempt", i.Faces.Average(f => f.Contempt)),
                        new KeyValuePair<string, float>("Fear", i.Faces.Average(f => f.Fear)),
@@ -307,9 +305,11 @@ namespace VisualMoodTracker.Controllers
                        new KeyValuePair<string, float>("Sadness", i.Faces.Average(f => f.Sadness)),
                        new KeyValuePair<string, float>("Surprise", i.Faces.Average(f => f.Surprise)),
                        new KeyValuePair<string, float>("Disgust", i.Faces.Average(f => f.Disgust)),
-                   }
-               });
-            return Ok(GaphPointList);
+                       }
+                   });
+            
+                return Ok(GraphPointList);
+            
         }
 
         public System.Drawing.Image Base64ToImage(string base64String)

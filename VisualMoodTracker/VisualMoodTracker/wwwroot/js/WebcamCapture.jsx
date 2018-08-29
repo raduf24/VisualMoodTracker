@@ -89,7 +89,8 @@ export default class WebcamCapture extends React.Component {
                         video.srcObject.getTracks().forEach(track => track.stop());
                         video.srcObject = null;
 
-                        this.props.updateState(response.data, true)
+                        this.props.updateState(response.data, true);
+                        window.location.hash = "sessionId=" + response.data.name; return false;
                     });
             }
         }
@@ -130,8 +131,11 @@ export default class WebcamCapture extends React.Component {
         return (
             <div>
                 <button className="btn btn-lg black-background white" onClick={this.startWebcam}>Start Webcam</button>
+                &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.pauseWebcam}>{this.state.buttonState}</button>
+                &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.stopWebcam}>Stop Webcam</button>
+               <br /><br />
                 <div>
                     <video width="400" height="400" id='video' autoPlay="true" controls="true" />
                 </div>
