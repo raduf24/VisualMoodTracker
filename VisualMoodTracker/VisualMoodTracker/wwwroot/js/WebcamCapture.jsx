@@ -84,7 +84,7 @@ export default class WebcamCapture extends React.Component {
                         this.setState({
                             sessionId: response.data.name,
                             videoOn: false,
-                        })  
+                        })
                         video.srcObject.getVideoTracks().forEach(track => track.stop());
                         video.srcObject.getTracks().forEach(track => track.stop());
                         video.srcObject = null;
@@ -96,13 +96,15 @@ export default class WebcamCapture extends React.Component {
     }
 
     stopWebcam = () => {
-        var video = document.querySelector('video');
-        this.setState({
-            videoOn: false
-        })
-        video.srcObject.getVideoTracks().forEach(track => track.stop());
-        video.srcObject.getTracks().forEach(track => track.stop());
-        video.srcObject = null;
+        if (this.state.videoOn) {
+            var video = document.querySelector('video');
+            this.setState({
+                videoOn: false
+            })
+            video.srcObject.getVideoTracks().forEach(track => track.stop());
+            video.srcObject.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+        }
     };
 
     pauseWebcam = () => {
