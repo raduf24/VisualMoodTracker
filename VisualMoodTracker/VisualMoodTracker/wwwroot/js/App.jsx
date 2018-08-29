@@ -69,6 +69,7 @@ class App extends React.Component {
             return (
                 <div>
                     <SessionList updateState={this.updateState.bind(this)} />
+                    <br />
                 </div>
             );
         }

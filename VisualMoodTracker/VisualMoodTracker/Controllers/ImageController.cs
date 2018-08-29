@@ -291,7 +291,8 @@ namespace VisualMoodTracker.Controllers
         [HttpGet("sessions/{sessionID}/summary")]
         public IActionResult GetFacesFromImagesFromSession(int sessionId)
         {
-                var GraphPointList = _dbcontext.Images.Where(i => i.SessionId == sessionId)
+
+                var GraphPointList = _dbcontext.Images.Where(i => ((i.SessionId == sessionId) && (i.Faces.Count() > 0)))
                    .Include(i => i.Faces)
                    .Select(i => new GraphPoint
                    {

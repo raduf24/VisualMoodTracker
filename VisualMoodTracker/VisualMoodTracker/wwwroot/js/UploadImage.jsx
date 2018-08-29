@@ -95,7 +95,7 @@ export default class UploadImage extends React.Component {
                     {this.props.buttonValue}
                 </button>
                 &emsp; &emsp;
-                <button className="btn btn-lg black-background white" onClick={this.downloadHandler} disabled > Download </button>
+                <button style={{display: 'none'}} className="btn btn-lg black-background white" onClick={this.downloadHandler} disabled > Download </button>
             </div>
         );
     }

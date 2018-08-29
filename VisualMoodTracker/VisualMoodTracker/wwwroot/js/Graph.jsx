@@ -131,7 +131,7 @@
         return (
             <div>
                 <canvas ref="canvas" width={350} height={350} />
-               
+                <br /><br />
             </div>
         );
     }
