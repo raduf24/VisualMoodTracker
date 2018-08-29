@@ -3,7 +3,7 @@ export default class WebcamCapture extends React.Component {
 
     constructor(props) {
         super(props);
-        this.interval = setInterval(this.takePicture, 20000);
+        this.interval = setInterval(this.takePicture, 15000);
         this.state = {
             videoOn: false,
             buttonState: "Pause",
@@ -132,9 +132,9 @@ export default class WebcamCapture extends React.Component {
             <div>
                 <button className="btn btn-lg black-background white" onClick={this.startWebcam}>Start Webcam</button>
                 &emsp;
-                <button className="btn btn-lg black-background white" onClick={this.pauseWebcam}>{this.state.buttonState}</button>
+                <button className="btn btn-lg black-background white" onClick={this.pauseWebcam} disabled={!this.state.videoOn}>{this.state.buttonState}</button>
                 &emsp;
-                <button className="btn btn-lg black-background white" onClick={this.stopWebcam}>Stop Webcam</button>
+                <button className="btn btn-lg black-background white" onClick={this.stopWebcam} disabled={!this.state.videoOn}>Stop Webcam</button>
                <br /><br />
                 <div>
                     <video width="400" height="400" id='video' autoPlay="true" controls="true" />
