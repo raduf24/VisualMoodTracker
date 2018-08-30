@@ -22,6 +22,11 @@ class App extends React.Component {
 
     updateState = (value, autoStartWebcam) => {
         this.state.autoStartWebcam = autoStartWebcam;
+        if (value.images.length == 0) {
+            value.lastImagePath = 'sessions/notfound.png'
+        } else {
+            value.lastImagePath = value.images[value.images.length-1].path;
+        }
         this.setState({
             data: value,
             lastImagePath: value.lastImagePath,

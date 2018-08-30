@@ -58,16 +58,21 @@ const Card = (props) => {
 };
 
 const CardList = (props) => {
-    return (
-        <div style={{ display: 'inline-block', overflowY: 'scroll', height: '40em' }}>
-            {props.cards.faces.map(card => {
-                return <Card key={card.faceId}
-                    lastImagePath={props.cards.path}
-                    {...card} />
-            }
-            )}
-        </div>
-    );
+    if (props.cards) {
+        return (
+            <div style={{ display: 'inline-block', overflowY: 'scroll', height: '40em' }}>
+                {props.cards.faces.map(card => {
+                    return <Card key={card.faceId}
+                        lastImagePath={props.cards.path}
+                        {...card} />
+                }
+                )}
+            </div>
+        );
+    } else
+        return (
+            <div></div>
+                );
 };
 
 export default class FacesList extends React.Component {
@@ -90,8 +95,8 @@ export default class FacesList extends React.Component {
                 </div>
                     <br />
                 <div style={{ float: 'left' }}>
-                    <h2> Session {this.props.data.name}: </h2>
-                    <img src={this.props.data.images[this.props.data.images.length - 1].path} style={{ width: '40em', height: '25em' }} />
+                    <h2> Session {this.props.data.name}: {this.props.data.lastImagePath} </h2>
+                    <img src={this.props.data.lastImagePath} style={{ width: '40em', height: '25em' }} />
                     <br />
                     <br />
                     <br />
