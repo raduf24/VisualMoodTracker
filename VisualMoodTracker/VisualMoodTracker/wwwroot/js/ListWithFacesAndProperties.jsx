@@ -101,7 +101,7 @@ export default class FacesList extends React.Component {
                         <br />
                         <br />
                         <br />
-                        <Graph sessionId={this.props.data.sessionId} />
+                        <Graph updateState={this.props.updateState.bind(this)} sessionId={this.props.data.sessionId} />
                     </div>
                     <div >
                         <CardList cards={this.props.data.images[this.props.data.images.length - 1]} />

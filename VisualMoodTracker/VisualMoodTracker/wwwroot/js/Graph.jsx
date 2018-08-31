@@ -1,6 +1,11 @@
 ﻿export default class Graph extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            sessionId : props.sessionId, 
+        }
+        //console.log(this.state.sessionId);
+        this.getImage = this.getImage.bind(this);
     };
 
     getGraphData = () => {
@@ -10,10 +15,28 @@
             });
     };
 
+    getImage = (imageId) => {
+        axios.get("/api/sessions/" + this.props.sessionId + "/" + imageId)
+            .then(response => {
+                this.props.updateState(response.data);
+                //console.log("Response after Request: ", response.data);
+            });
+    };
+
+    clickHandler = (evt) => {
+        
+        var activePoint = window.myLine.getElementAtEvent(evt)[0];
+        var data = activePoint._chart.data;
+        var imgId = data.labels[activePoint["_index"]];
+        this.getImage(imgId);
+    }
+
     updateCanvas(data) {
         var labels = [], angerAverages = [], contemptAverages = [], fearAverages = [], happinessAverages = [], neutralAverages = [], sadnessAverages = [], surpriseAverages = [], disgustAverages = [];
         data.map(values => {
             labels.push(values.imageId);
+            //labels.onclick(this.getImage(this.props.sessionId, values.imageId));
+            //this.refs.canvas.addEventListener('click', this.getImage(this.props.sessionId, values.imageId));
             angerAverages.push(values.feelingAverages.find(x => x.key === 'Anger').value);
             contemptAverages.push(values.feelingAverages.find(x => x.key === 'Contempt').value);
             happinessAverages.push(values.feelingAverages.find(x => x.key === 'Happiness').value);
@@ -93,6 +116,7 @@
             ]
         };
 
+
         var ctx = this.refs.canvas.getContext('2d');
         window.myLine = Chart.Line(ctx, {
             data: lineChartData,
@@ -115,14 +139,17 @@
                         type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
                         display: false,
                         position: 'right',
-                        id: 'y-axis-2',
+                            id: 'y-axis-2',
 
                         // grid line settings
                         gridLines: {
                             drawOnChartArea: true, // only want the grid lines for one axis to show up
-                        },
-                    }],
-                }
+                            },
+                            
+                        }],
+                    
+                },
+                onClick: this.clickHandler,
             }
         });
     }
@@ -131,7 +158,7 @@
         this.getGraphData()
         return (
             <div>
-                <canvas ref="canvas" width={560} height={350} />
+                <canvas id="canvas" ref="canvas" width={560} height={350} />
                 <br /><br />
             </div>
         );

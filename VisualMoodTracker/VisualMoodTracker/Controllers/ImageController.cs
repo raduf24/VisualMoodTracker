@@ -138,6 +138,8 @@ namespace VisualMoodTracker.Controllers
             return Ok(res);
         }
 
+       
+
         [HttpPost("sessions/webcam")]
         public IActionResult UploadFromWebcam(string base64Img, string sessionId)
         {
@@ -288,6 +290,40 @@ namespace VisualMoodTracker.Controllers
 
         }
 
+        [HttpGet("sessions/{sessionId}/{imageId}")]
+        public IActionResult GetImageFromSession(int sessionId, int imageId)
+        {
+            try
+            {
+                var res = _dbcontext.Sessions
+                    .Include(s => s.Images)
+                    .ThenInclude(i => i.Faces)
+                    .Where(s => s.SessionId == sessionId && s.Images.Any(a => a.ImageId == imageId)).First();
+
+                //var imgRes = res.Images.Where(i => i.ImageId == imageId);
+                //res.Images = res.Images.OrderBy(i => i.CreationDate);
+
+                foreach (var image in res.Images)
+                {
+                    if(image.ImageId != imageId)
+                    {
+                        res.Images.ToList().Remove(image);
+                        //res.Images.ToList().Add(image);
+                    }
+                    image.Path = image.Path.Replace("wwwroot\\", "");
+                }
+
+                //res.Images.ToList().RemoveAll(x => x.ImageId != imageId);
+                res.Images = res.Images.Where(i => i.ImageId == imageId); 
+
+                return Ok(res);
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new Session() { Name = null, Images = new List<VisualMoodTracker.Models.Image>() });
+            }
+        }
 
         [HttpGet("sessions/{sessionID}/summary")]
         public IActionResult GetFacesFromImagesFromSession(int sessionId)
