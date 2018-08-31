@@ -3,7 +3,7 @@ export default class WebcamCapture extends React.Component {
 
     constructor(props) {
         super(props);
-        this.interval = setInterval(this.takePicture, 15000);
+        //this.interval = setInterval(this.takePicture, 15000);
         this.state = {
             videoOn: false,
             buttonState: "Pause",
@@ -40,8 +40,8 @@ export default class WebcamCapture extends React.Component {
             videoOn: true,
             buttonState: "Pause",
             video: document.querySelector('video')
-        });
-        this.interval;
+        }, () => { setTimeout(this.takePicture, 2000); });
+        
     }
 
     takePicture = () => {
@@ -54,7 +54,7 @@ export default class WebcamCapture extends React.Component {
             canvas.width = (video.videoWidth / 2);
             canvas.height = (video.videoHeight / 2);
             context.drawImage(video, 0, 0, (video.videoWidth / 2), (video.videoHeight / 2));
-            var base64Img = canvas.toDataURL('image.png');
+            var base64Img = canvas.toDataURL('image/jpeg');
 
             if (this.props.sessionId != null) {
                 const formData = new FormData();
@@ -66,7 +66,7 @@ export default class WebcamCapture extends React.Component {
                     }
                 }
                 axios.post(url, formData, config).then(response => {
-                    this.props.updateState(response.data)
+                    this.props.updateState(response.data, false, () => { setTimeout(this.takePicture, 0);});
                 });
             }
             else {
@@ -130,14 +130,14 @@ export default class WebcamCapture extends React.Component {
         //this.interval;
         return (
             <div>
-                <button className="btn btn-lg black-background white" onClick={this.startWebcam}>Start Webcam</button>
+                <button className="btn btn-lg black-background white" onClick={this.startWebcam} disabled={this.state.videoOn}>Start Webcam</button>
                 &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.pauseWebcam} disabled={!this.state.videoOn}>{this.state.buttonState}</button>
                 &emsp;
                 <button className="btn btn-lg black-background white" onClick={this.stopWebcam} disabled={!this.state.videoOn}>Stop Webcam</button>
                <br /><br />
                 <div>
-                    <video width="400" height="400" id='video' autoPlay="true" controls="true" />
+                    <video width="400" height="300" id='video' autoPlay="true" controls="true" />
                 </div>
                 <canvas hidden="true"></canvas>
             </div>

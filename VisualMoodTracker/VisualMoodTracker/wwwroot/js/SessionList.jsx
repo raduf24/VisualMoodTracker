@@ -9,7 +9,7 @@ export default class SessionList extends React.Component {
             updateState: props.updateState,
             sessionList: [],
             loading: true,
-            isSortAsc: true,
+            isSortAsc: false,
             columnName: 'sessionId',
         }
     };

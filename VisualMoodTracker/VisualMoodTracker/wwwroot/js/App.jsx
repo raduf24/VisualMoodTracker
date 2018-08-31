@@ -20,7 +20,7 @@ class App extends React.Component {
         this.updateURL();
     }
 
-    updateState = (value, autoStartWebcam) => {
+    updateState = (value, autoStartWebcam, callback) => {
         this.state.autoStartWebcam = autoStartWebcam;
         if (value.images.length == 0) {
             value.lastImagePath = 'sessions/notfound.png'
@@ -34,7 +34,7 @@ class App extends React.Component {
             lastImageId: value.lastImageId,
             astImageExtension: value.imageExtension,
             autoStartWebcam: autoStartWebcam
-        })
+        },callback)
     };
 
     updateURL() {

@@ -76,8 +76,8 @@
             }
                 , {
                 label: 'Sadness',
-                borderColor: "#d8c3c3",
-                backgroundColor: "#d8c3c3",
+                borderColor: "#ffc3ff",
+                backgroundColor: "#ffc3ff",
                 fill: false,
                 data: sadnessAverages,
                 yAxisID: 'y-axis-1'
@@ -97,6 +97,7 @@
         window.myLine = Chart.Line(ctx, {
             data: lineChartData,
             options: {
+                animation: false,
                 responsive: true,
                 hoverMode: 'index',
                 stacked: false,
@@ -130,7 +131,7 @@
         this.getGraphData()
         return (
             <div>
-                <canvas ref="canvas" width={350} height={350} />
+                <canvas ref="canvas" width={560} height={350} />
                 <br /><br />
             </div>
         );

@@ -159,9 +159,9 @@ namespace VisualMoodTracker.Controllers
                 _dbcontext.SaveChanges();
             }
 
-            Session session = _dbcontext.Sessions.Last();
+            Session session = _dbcontext.Sessions.Where(s => s.Name == sessionId).Last();
 
-            base64Img = base64Img.Replace("data:image/png;base64,", string.Empty);
+            base64Img = base64Img.Replace("data:image/jpeg;base64,", string.Empty);
             //byte[] imageBytes = Convert.FromBase64String(base64Img);
 
             System.Drawing.Image IMG = Base64ToImage(base64Img);
@@ -173,7 +173,8 @@ namespace VisualMoodTracker.Controllers
             //stream.Write(imageBytes, 0, imageBytes.Length);
             using (MemoryStream stream = new MemoryStream())
             {
-                IMG.Save(stream, IMG.RawFormat);
+               
+                IMG.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg);
 
                 using (var test = new FileStream("wwwroot\\sessions\\" + sessionId + "\\" + fileId + ".jpg", FileMode.Create))
                 {
@@ -292,22 +293,22 @@ namespace VisualMoodTracker.Controllers
         public IActionResult GetFacesFromImagesFromSession(int sessionId)
         {
 
-                var GraphPointList = _dbcontext.Images.Where(i => ((i.SessionId == sessionId) && (i.Faces.Count() > 0)))
-                   .Include(i => i.Faces)
-                   .Select(i => new GraphPoint
+                var GraphPointList = _dbcontext.Faces.Where(f => f.Image.SessionId == sessionId)
+                   .GroupBy(f=>f.ImageId)
+                   .Select(g => new GraphPoint
                    {
-                       ImageId = i.ImageId,
+                       ImageId = g.Key,
                        FeelingAverages = {
-                       new KeyValuePair<string, float>("Anger", i.Faces.Average(f => f.Anger)),
-                       new KeyValuePair<string, float>("Contempt", i.Faces.Average(f => f.Contempt)),
-                       new KeyValuePair<string, float>("Fear", i.Faces.Average(f => f.Fear)),
-                       new KeyValuePair<string, float>("Happiness", i.Faces.Average(f => f.Happiness)),
-                       new KeyValuePair<string, float>("Neutral", i.Faces.Average(f => f.Neutral)),
-                       new KeyValuePair<string, float>("Sadness", i.Faces.Average(f => f.Sadness)),
-                       new KeyValuePair<string, float>("Surprise", i.Faces.Average(f => f.Surprise)),
-                       new KeyValuePair<string, float>("Disgust", i.Faces.Average(f => f.Disgust)),
+                       new KeyValuePair<string, float>("Anger", g.Average(f=>f.Anger)),
+                       new KeyValuePair<string, float>("Contempt",  g.Average(f=>f.Contempt)),
+                       new KeyValuePair<string, float>("Fear",  g.Average(f=>f.Fear)),
+                       new KeyValuePair<string, float>("Happiness",  g.Average(f=>f.Happiness)),
+                       new KeyValuePair<string, float>("Neutral",  g.Average(f=>f.Neutral)),
+                       new KeyValuePair<string, float>("Sadness",  g.Average(f=>f.Sadness)),
+                       new KeyValuePair<string, float>("Surprise",  g.Average(f=>f.Surprise)),
+                       new KeyValuePair<string, float>("Disgust",  g.Average(f=>f.Disgust)),
                        }
-                   });
+                   }).ToList();
             
                 return Ok(GraphPointList);
             
@@ -318,11 +319,11 @@ namespace VisualMoodTracker.Controllers
             // Convert base 64 string to byte[]
             byte[] imageBytes = Convert.FromBase64String(base64String);
             // Convert byte[] to Image
-            using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
-            {
+            var ms = new MemoryStream(imageBytes, 0, imageBytes.Length);
+           
                 System.Drawing.Image image = System.Drawing.Image.FromStream(ms, true);
                 return image;
-            }
+         
         }
 
         //private IEnumerable<GraphPoint> GetFeelingsAverage(IEnumerable<GraphPoint> graphPoints)

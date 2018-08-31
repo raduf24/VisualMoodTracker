@@ -22,7 +22,7 @@ const Card = (props) => {
     const zoomFactor = (thumbnailWidth / props.width) - (1 / props.height / props.width);
 
     return (
-        <div style={{ margin: '1em' }}>
+        <div style={{ marginBottom: '1em' }}>
             <div style={{ display: 'inline-flex' }}>
                 <div style={{
                     overflow: 'hidden', position: 'relative', width: thumbnailWidth, height: thumbnailHeight,
@@ -60,7 +60,7 @@ const Card = (props) => {
 const CardList = (props) => {
     if (props.cards) {
         return (
-            <div style={{ display: 'inline-block', overflowY: 'scroll', height: '40em' }}>
+            <div style={{overflowY: 'scroll', height: '55em' }}>
                 {props.cards.faces.map(card => {
                     return <Card key={card.faceId}
                         lastImagePath={props.cards.path}
@@ -85,26 +85,28 @@ export default class FacesList extends React.Component {
     render() {
         return (
             <div>
-                <h2> Add image to session </h2>
-                <div >
-                    <UploadImage buttonValue="Add Image" sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} />
-                </div>
-                <br />
                 <div>
-                    <WebcamCapture sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} autoStartWebcam={this.props.autoStartWebcam} />
+                    <br/>
+                    <div style={{ float: 'left', marginRight: '1em' }}>
+                        <WebcamCapture sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} autoStartWebcam={this.props.autoStartWebcam} />
+                    </div>
+                    <div >
+                        <UploadImage buttonValue="Add Image" sessionId={this.props.data.name} updateState={this.props.updateState.bind(this)} />
+                    </div>
                 </div>
-                    <br />
-                <div style={{ float: 'left' }}>
-                    <h2> Session {this.props.data.name}: {this.props.data.lastImagePath} </h2>
-                    <img src={this.props.data.lastImagePath} style={{ width: '40em', height: '25em' }} />
-                    <br />
-                    <br />
-                    <br />
-                    <Graph sessionId={this.props.data.sessionId} />
+                <div style={{ clear: 'both' }}>
+                    <h3> Session {this.props.data.name}:</h3>
+                    <div style={{ float: 'left'}}>
+                        <img src={this.props.data.lastImagePath} style={{ maxWidth: '40em', maxHeight: '25em', display:'block', marginLeft:'auto', marginRight:'auto' }} />
+                        <br />
+                        <br />
+                        <br />
+                        <Graph sessionId={this.props.data.sessionId} />
+                    </div>
+                    <div >
+                        <CardList cards={this.props.data.images[this.props.data.images.length - 1]} />
+                    </div>
                 </div>
-
-                <Form />
-                <CardList cards={this.props.data.images[this.props.data.images.length - 1]} />
             </div>
         );
     }
